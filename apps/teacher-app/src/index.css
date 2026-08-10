@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Microsoft Fluent Design Colors */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 13%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
+
+    --primary: 207 90% 54%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 17% 95%;
+    --secondary-foreground: 0 0% 13%;
+
+    --muted: 210 17% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 210 20% 92%;
+    --accent-foreground: 207 90% 54%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 93%;
+    --ring: 207 90% 54%;
+
+    --radius: 0.25rem;
+    
+    /* Microsoft-style shadows - softer and more subtle */
+    --shadow-sm: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.13), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.11);
+    --shadow-md: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.13), 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.11);
+    --shadow-lg: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.13), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.11);
+    --shadow-xl: 0 25.6px 57.6px 0 rgba(0, 0, 0, 0.22), 0 4.8px 14.4px 0 rgba(0, 0, 0, 0.18);
+    
+    /* Acrylic effect */
+    --acrylic-bg: rgba(255, 255, 255, 0.7);
+    --acrylic-border: rgba(255, 255, 255, 0.8);
+
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 0 0% 13%;
+    --sidebar-primary: 207 90% 54%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 92%;
+    --sidebar-accent-foreground: 0 0% 13%;
+    --sidebar-border: 214 20% 90%;
+    --sidebar-ring: 207 90% 54%;
+  }
+
+  .dark {
+    --background: 0 0% 12%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 16%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 16%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 207 90% 54%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 17% 20%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 210 20% 22%;
+    --accent-foreground: 207 90% 54%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 22%;
+    --input: 0 0% 20%;
+    --ring: 207 90% 54%;
+    
+    --shadow-sm: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 25.6px 57.6px 0 rgba(0, 0, 0, 0.7);
+    
+    --acrylic-bg: rgba(32, 32, 32, 0.7);
+    --acrylic-border: rgba(255, 255, 255, 0.1);
+    
+    --sidebar-background: 0 0% 14%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 207 90% 54%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 20% 22%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 22%;
+    --sidebar-ring: 207 90% 54%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .acrylic {
+    background: var(--acrylic-bg);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid var(--acrylic-border);
+  }
+  
+  .fluent-hover {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.6, 1);
+  }
+  
+  .fluent-hover:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .shadow-fluent {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .shadow-fluent-lg {
+    box-shadow: var(--shadow-lg);
+  }
+}
