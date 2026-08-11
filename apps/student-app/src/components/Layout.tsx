@@ -3,31 +3,14 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Menu, Search, Bell } from "lucide-react";
 import { Input } from "@nudle/ui/input";
 import { Button } from "@nudle/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { ProfileMenu } from "@/components/ProfileMenu";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { user } = useAuth();
-  const { data: me } = useQuery({
-    queryKey: ["me"],
-    queryFn: () =>
-      api.get<{
-        profile: { full_name: string; email: string } | null;
-        email?: string;
-      }>("/api/me"),
-    enabled: Boolean(user),
-  });
-
-  const name = me?.profile?.full_name || user?.name || "Student";
-  const email = me?.profile?.email || user?.email || "";
-  const initial = name.charAt(0).toUpperCase();
-
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
@@ -54,17 +37,7 @@ export function Layout({ children }: LayoutProps) {
                   <Bell className="h-4 w-4" />
                 </Button>
                 <ThemeToggle compact />
-                <div className="hidden sm:flex items-center gap-3 rounded-full bg-card border border-border/70 px-2 py-1.5 shadow-sm">
-                  <div className="text-right pl-1">
-                    <p className="text-sm font-semibold leading-none">{name}</p>
-                    <p className="text-[11px] text-muted-foreground mt-1 truncate max-w-[140px]">
-                      {email}
-                    </p>
-                  </div>
-                  <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">
-                    {initial}
-                  </div>
-                </div>
+                <ProfileMenu />
               </div>
             </div>
           </header>

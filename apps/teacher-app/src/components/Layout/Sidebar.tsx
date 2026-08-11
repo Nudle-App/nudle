@@ -4,7 +4,6 @@ import {
   GraduationCap,
   MessageSquare,
   BarChart3,
-  Settings,
   Calendar,
   FileText,
   X,
@@ -13,7 +12,7 @@ import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 import stIgnatiusLogo from "@/assets/st-ignatius-logo.png";
 import { Button } from "@nudle/ui/button";
-import { useMe } from "@/hooks/useTeacherData";
+import { ProfileMenu } from "@/components/Layout/ProfileMenu";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -23,27 +22,7 @@ const menuItems = [
   { icon: FileText, label: "Report Cards", path: "/report-cards" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
   { icon: MessageSquare, label: "Messages", path: "/messages" },
-  { icon: Settings, label: "Settings", path: "/settings" },
 ];
-
-function SidebarUser() {
-  const { data: me } = useMe();
-  const name = me?.profile?.full_name || me?.email || "Teacher";
-  const email = me?.profile?.email || me?.email || "";
-  const initial = name.charAt(0).toUpperCase();
-
-  return (
-    <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-muted/60">
-      <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
-        {initial}
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold truncate">{name}</p>
-        <p className="text-xs text-muted-foreground truncate">{email}</p>
-      </div>
-    </div>
-  );
-}
 
 interface SidebarProps {
   isOpen: boolean;
@@ -98,7 +77,7 @@ export const Sidebar = ({ isOpen, mobileOpen, onMobileClose }: SidebarProps) => 
         </nav>
 
         <div className="p-3 border-t border-sidebar-border">
-          <SidebarUser />
+          <ProfileMenu variant="sidebar" align="start" side="top" />
         </div>
       </aside>
     </>

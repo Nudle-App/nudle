@@ -1,23 +1,10 @@
-import { Search, Bell, Bot, Menu, LogOut } from "lucide-react";
+import { Search, Bell, Bot, Menu } from "lucide-react";
 import { Input } from "@nudle/ui/input";
 import { Button } from "@nudle/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@nudle/ui/popover";
 import { Separator } from "@nudle/ui/separator";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@nudle/ui/alert-dialog";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@nudle/ui/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ProfileMenu } from "@/components/Layout/ProfileMenu";
 
 interface HeaderProps {
   onAskNudle: () => void;
@@ -31,19 +18,6 @@ export const Header = ({
   onToggleSidebar,
   onToggleMobileSidebar,
 }: HeaderProps) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    await signOut();
-    toast({
-      title: "Signed out successfully",
-      description: "You have been logged out of your account",
-    });
-    navigate("/auth");
-  };
-
   return (
     <header className="h-16 sticky top-0 z-10 bg-background/80 backdrop-blur-md">
       <div className="h-full px-4 md:px-8 flex items-center justify-between gap-4">
@@ -93,34 +67,7 @@ export const Header = ({
 
           <ThemeToggle compact />
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="rounded-full text-destructive hover:text-destructive"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="rounded-2xl">
-              <AlertDialogHeader>
-                <AlertDialogTitle>Sign out?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  You will be logged out and redirected to the sign-in page.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => void handleSignOut()}
-                  className="rounded-full bg-destructive text-destructive-foreground"
-                >
-                  Sign out
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <ProfileMenu variant="avatar" />
 
           <Button onClick={onAskNudle} className="rounded-full shadow-sm" size="default">
             <Bot className="h-4 w-4 mr-2" />

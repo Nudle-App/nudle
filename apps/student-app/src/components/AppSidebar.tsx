@@ -4,8 +4,6 @@ import {
   BookOpen,
   TrendingUp,
   Bell,
-  User,
-  Settings,
   Calendar,
   GraduationCap,
   FileText,
@@ -33,11 +31,7 @@ const mainItems = [
   { title: "AI Insights", url: "/insights", icon: TrendingUp },
 ];
 
-const secondaryItems = [
-  { title: "Notices", url: "/notices", icon: Bell },
-  { title: "My Account", url: "/account", icon: User },
-  { title: "Settings", url: "/settings", icon: Settings },
-];
+const secondaryItems = [{ title: "Notices", url: "/notices", icon: Bell }];
 
 export function AppSidebar() {
   const { open } = useSidebar();
