@@ -1,7 +1,6 @@
 import { Search, Bell, Bot, Menu, LogOut } from "lucide-react";
 import { Input } from "@nudle/ui/input";
 import { Button } from "@nudle/ui/button";
-import { Badge } from "@nudle/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@nudle/ui/popover";
 import { Separator } from "@nudle/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@nudle/ui/alert-dialog";
@@ -61,54 +60,17 @@ export const Header = ({ onAskNudle, onToggleSidebar, onToggleMobileSidebar, sid
       <div className="flex items-center gap-3">
         <Popover>
           <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="relative"
-            >
+            <Button variant="outline" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-destructive text-destructive-foreground text-xs">
-                3
-              </Badge>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-80" align="end">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-foreground">Notifications</h4>
-                <Badge variant="secondary" className="text-xs">3 new</Badge>
-              </div>
+            <div className="space-y-2">
+              <h4 className="font-semibold text-foreground">Notifications</h4>
               <Separator />
-              <div className="space-y-3">
-                <div className="flex gap-3 p-2 rounded-lg hover:bg-accent cursor-pointer">
-                  <div className="h-2 w-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium text-foreground">New assignment submitted</p>
-                    <p className="text-xs text-muted-foreground">Sarah Johnson submitted Math Assignment 3</p>
-                    <p className="text-xs text-muted-foreground">2 hours ago</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 p-2 rounded-lg hover:bg-accent cursor-pointer">
-                  <div className="h-2 w-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium text-foreground">Grade review requested</p>
-                    <p className="text-xs text-muted-foreground">Michael Chen requested review for Quiz 5</p>
-                    <p className="text-xs text-muted-foreground">5 hours ago</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 p-2 rounded-lg hover:bg-accent cursor-pointer">
-                  <div className="h-2 w-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium text-foreground">Course material updated</p>
-                    <p className="text-xs text-muted-foreground">New lecture notes added to Physics 101</p>
-                    <p className="text-xs text-muted-foreground">1 day ago</p>
-                  </div>
-                </div>
-              </div>
-              <Separator />
-              <Button variant="ghost" className="w-full" size="sm">
-                View all notifications
-              </Button>
+              <p className="text-sm text-muted-foreground py-4 text-center">
+                No notifications yet
+              </p>
             </div>
           </PopoverContent>
         </Popover>

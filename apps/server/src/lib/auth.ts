@@ -1,5 +1,4 @@
 import { betterAuth } from "better-auth";
-import { dash } from "@better-auth/infra";
 import { Pool } from "pg";
 import { db } from "./db.js";
 
@@ -13,22 +12,17 @@ const pool = new Pool({
   ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
 });
 
-const trustedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:5175",
-  process.env.CORS_ORIGIN,
-  process.env.TEACHER_ORIGIN,
-  process.env.STUDENT_ORIGIN,
-].filter(Boolean) as string[];
-
 const isHttps = (process.env.BETTER_AUTH_URL ?? "").startsWith("https://");
 
 export const auth = betterAuth({
   database: pool,
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3001",
-  trustedOrigins,
+  // Allow any Origin that calls the API (pairs with cors origin: true).
+  trustedOrigins: async (request) => {
+    const origin = request?.headers.get("origin");
+    return origin ? [origin] : [];
+  },
   emailAndPassword: {
     enabled: true,
   },
@@ -94,15 +88,8 @@ export const auth = betterAuth({
       },
     },
   },
-  plugins: [
-    ...(process.env.BETTER_AUTH_API_KEY
-      ? [
-          dash({
-            apiKey: process.env.BETTER_AUTH_API_KEY,
-          }),
-        ]
-      : []),
-  ],
+  // @better-auth/infra (dash) requires zod v4 across the whole install graph;
+  // omit until the monorepo is on zod 4 — BETTER_AUTH_API_KEY alone is not enough.
 });
 
 export type SessionUser = {

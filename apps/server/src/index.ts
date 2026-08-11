@@ -18,19 +18,11 @@ import { teacherRouter } from "./routes/teacher.js";
 const app = express();
 const port = Number(process.env.PORT) || 3001;
 
-const origins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://localhost:5175",
-  process.env.CORS_ORIGIN,
-  process.env.TEACHER_ORIGIN,
-  process.env.STUDENT_ORIGIN,
-].filter(Boolean) as string[];
-
 app.use(helmet({ crossOriginResourcePolicy: false }));
+// Reflect request Origin so credentialed cookies work from any frontend.
 app.use(
   cors({
-    origin: origins,
+    origin: true,
     credentials: true,
   }),
 );
