@@ -9,42 +9,53 @@ const chatSchema = z.object({
 });
 
 /**
- * Proxies to the Supabase Edge Function `ai-assistant`.
- * Frontends must not call Supabase functions directly.
+ * Optional OpenAI proxy. Set OPENAI_API_KEY to enable.
  */
 aiRouter.post("/ai/assistant", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const body = chatSchema.parse(req.body);
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const publishableKey =
-      process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_ANON_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
 
-    if (!supabaseUrl || !publishableKey) {
-      res.status(503).json({ error: "Supabase is not configured on the server" });
-      return;
-    }
-
-    const response = await fetch(`${supabaseUrl}/functions/v1/ai-assistant`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${req.accessToken}`,
-        apikey: publishableKey,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: body.message }),
-    });
-
-    const payload = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      res.status(response.status).json({
-        error:
-          (payload as { error?: string }).error ??
-          "AI assistant request failed",
+    if (!apiKey) {
+      res.status(503).json({
+        error: "AI assistant is not configured (set OPENAI_API_KEY)",
       });
       return;
     }
 
-    res.json(payload);
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You are Nudle, a helpful teaching assistant.",
+          },
+          { role: "user", content: body.message },
+        ],
+      }),
+    });
+
+    const payload = (await response.json().catch(() => ({}))) as {
+      error?: { message?: string };
+      choices?: { message?: { content?: string } }[];
+    };
+
+    if (!response.ok) {
+      res.status(response.status).json({
+        error: payload.error?.message ?? "AI assistant request failed",
+      });
+      return;
+    }
+
+    res.json({
+      reply: payload.choices?.[0]?.message?.content ?? "",
+    });
   } catch (err) {
     if (err instanceof z.ZodError) {
       res.status(400).json({ error: err.flatten() });

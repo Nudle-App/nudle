@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth.js";
-import { createUserClient } from "../lib/supabase.js";
+import { db } from "../lib/db.js";
 
 export const conversationsRouter = Router();
 
@@ -10,45 +10,47 @@ conversationsRouter.get(
   requireAuth,
   async (req: AuthenticatedRequest, res) => {
     try {
-      const supabase = createUserClient(req.accessToken!);
       const userId = req.user!.id;
+      const conversationIds = await db("conversation_participants")
+        .where({ user_id: userId })
+        .pluck("conversation_id");
 
-      const { data: participantData, error: participantError } = await supabase
-        .from("conversation_participants")
-        .select("conversation_id")
-        .eq("user_id", userId);
-
-      if (participantError) {
-        res.status(400).json({ error: participantError.message });
-        return;
-      }
-
-      const conversationIds = (participantData ?? []).map((p) => p.conversation_id);
       if (conversationIds.length === 0) {
         res.json([]);
         return;
       }
 
-      const { data, error } = await supabase
-        .from("conversations")
-        .select(
-          `
-          *,
-          conversation_participants!inner(
-            user_id,
-            profiles(id, email, full_name)
-          )
-        `,
-        )
-        .in("id", conversationIds)
-        .order("updated_at", { ascending: false });
+      const conversations = await db("conversations")
+        .whereIn("id", conversationIds)
+        .orderBy("updated_at", "desc");
 
-      if (error) {
-        res.status(400).json({ error: error.message });
-        return;
+      const participants = await db("conversation_participants as cp")
+        .join("user as u", "u.id", "cp.user_id")
+        .whereIn("cp.conversation_id", conversationIds)
+        .select(
+          "cp.conversation_id",
+          "cp.user_id",
+          "u.id as profile_id",
+          "u.email",
+          "u.name",
+        );
+
+      const byConv = new Map<string, unknown[]>();
+      for (const p of participants) {
+        const list = byConv.get(p.conversation_id) ?? [];
+        list.push({
+          user_id: p.user_id,
+          profiles: { id: p.profile_id, email: p.email, full_name: p.name },
+        });
+        byConv.set(p.conversation_id, list);
       }
 
-      res.json(data ?? []);
+      res.json(
+        conversations.map((c) => ({
+          ...c,
+          conversation_participants: byConv.get(c.id) ?? [],
+        })),
+      );
     } catch (err) {
       res.status(500).json({
         error: err instanceof Error ? err.message : "Failed to load conversations",
@@ -59,7 +61,7 @@ conversationsRouter.get(
 
 const createConversationSchema = z.object({
   subject: z.string().min(1),
-  recipient_id: z.string().uuid(),
+  recipient_id: z.string().min(1),
 });
 
 conversationsRouter.post(
@@ -68,31 +70,16 @@ conversationsRouter.post(
   async (req: AuthenticatedRequest, res) => {
     try {
       const body = createConversationSchema.parse(req.body);
-      const supabase = createUserClient(req.accessToken!);
       const userId = req.user!.id;
 
-      const { data: conversation, error: conversationError } = await supabase
-        .from("conversations")
+      const [conversation] = await db("conversations")
         .insert({ subject: body.subject.trim() })
-        .select()
-        .single();
+        .returning("*");
 
-      if (conversationError || !conversation) {
-        res.status(400).json({ error: conversationError?.message ?? "Failed to create conversation" });
-        return;
-      }
-
-      const { error: participantsError } = await supabase
-        .from("conversation_participants")
-        .insert([
-          { conversation_id: conversation.id, user_id: userId },
-          { conversation_id: conversation.id, user_id: body.recipient_id },
-        ]);
-
-      if (participantsError) {
-        res.status(400).json({ error: participantsError.message });
-        return;
-      }
+      await db("conversation_participants").insert([
+        { conversation_id: conversation.id, user_id: userId },
+        { conversation_id: conversation.id, user_id: body.recipient_id },
+      ]);
 
       res.status(201).json(conversation);
     } catch (err) {
@@ -112,37 +99,18 @@ conversationsRouter.get(
   requireAuth,
   async (req: AuthenticatedRequest, res) => {
     try {
-      const supabase = createUserClient(req.accessToken!);
-      const conversationId = req.params.id;
-
-      const { data: messages, error } = await supabase
-        .from("messages")
-        .select("*")
-        .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        res.status(400).json({ error: error.message });
+      const member = await db("conversation_participants")
+        .where({ conversation_id: req.params.id, user_id: req.user!.id })
+        .first();
+      if (!member) {
+        res.status(403).json({ error: "Forbidden" });
         return;
       }
 
-      const senderIds = [...new Set((messages ?? []).map((m) => m.sender_id))];
-      let senders: { id: string; email: string; full_name: string }[] = [];
-
-      if (senderIds.length > 0) {
-        const { data: senderProfiles } = await supabase
-          .from("profiles")
-          .select("id, email, full_name")
-          .in("id", senderIds);
-        senders = senderProfiles ?? [];
-      }
-
-      res.json(
-        (messages ?? []).map((msg) => ({
-          ...msg,
-          sender: senders.find((p) => p.id === msg.sender_id) ?? null,
-        })),
-      );
+      const messages = await db("messages")
+        .where({ conversation_id: req.params.id })
+        .orderBy("created_at", "asc");
+      res.json(messages);
     } catch (err) {
       res.status(500).json({
         error: err instanceof Error ? err.message : "Failed to load messages",
@@ -151,7 +119,7 @@ conversationsRouter.get(
   },
 );
 
-const sendMessageSchema = z.object({
+const messageSchema = z.object({
   content: z.string().min(1),
 });
 
@@ -160,32 +128,28 @@ conversationsRouter.post(
   requireAuth,
   async (req: AuthenticatedRequest, res) => {
     try {
-      const body = sendMessageSchema.parse(req.body);
-      const supabase = createUserClient(req.accessToken!);
-      const conversationId = req.params.id;
-      const userId = req.user!.id;
-
-      const { data, error } = await supabase
-        .from("messages")
-        .insert({
-          conversation_id: conversationId,
-          sender_id: userId,
-          content: body.content.trim(),
-        })
-        .select()
-        .single();
-
-      if (error) {
-        res.status(400).json({ error: error.message });
+      const body = messageSchema.parse(req.body);
+      const member = await db("conversation_participants")
+        .where({ conversation_id: req.params.id, user_id: req.user!.id })
+        .first();
+      if (!member) {
+        res.status(403).json({ error: "Forbidden" });
         return;
       }
 
-      await supabase
-        .from("conversations")
-        .update({ updated_at: new Date().toISOString() })
-        .eq("id", conversationId);
+      const [message] = await db("messages")
+        .insert({
+          conversation_id: req.params.id,
+          sender_id: req.user!.id,
+          content: body.content,
+        })
+        .returning("*");
 
-      res.status(201).json(data);
+      await db("conversations")
+        .where({ id: req.params.id })
+        .update({ updated_at: db.fn.now() });
+
+      res.status(201).json(message);
     } catch (err) {
       if (err instanceof z.ZodError) {
         res.status(400).json({ error: err.flatten() });

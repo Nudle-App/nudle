@@ -1,15 +1,25 @@
 import { Router } from "express";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth.js";
+import { db } from "../lib/db.js";
+import { asProfile } from "../lib/access.js";
 
 export const meRouter = Router();
 
-meRouter.get("/me", requireAuth, (req: AuthenticatedRequest, res) => {
-  const user = req.user!;
-  res.json({
-    id: user.id,
-    email: user.email,
-    role: user.role,
-    appMetadata: user.app_metadata,
-    userMetadata: user.user_metadata,
-  });
+meRouter.get("/me", requireAuth, async (req: AuthenticatedRequest, res) => {
+  try {
+    const roles = await db("user_roles")
+      .where({ user_id: req.user!.id })
+      .pluck("role");
+
+    res.json({
+      id: req.user!.id,
+      email: req.user!.email,
+      profile: asProfile(req.user!),
+      roles,
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Failed to load current user",
+    });
+  }
 });

@@ -1,13 +1,15 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import { createContext, useContext } from "react";
+import { authClient } from "@/lib/auth-client";
 import { api } from "@/lib/api";
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  user: { id: string; email: string; name: string } | null;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+  ) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   loading: boolean;
 }
@@ -15,60 +17,46 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-      setLoading(false);
-    });
-
-    supabase.auth.getSession().then(({ data: { session: existing } }) => {
-      setSession(existing);
-      setUser(existing?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { data: session, isPending } = authClient.useSession();
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error };
+    const { error } = await authClient.signIn.email({ email, password });
+    return { error: error ? new Error(error.message || "Sign in failed") : null };
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { error, data } = await supabase.auth.signUp({
+    const { error } = await authClient.signUp.email({
       email,
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: { full_name: fullName },
-      },
+      name: fullName,
     });
-
-    if (!error && data.user && data.session) {
-      try {
-        await api.post("/api/profiles", { email, full_name: fullName });
-      } catch (profileError) {
-        console.error("Failed to create profile via API:", profileError);
-      }
+    if (error) {
+      return { error: new Error(error.message || "Sign up failed") };
     }
-
-    return { error };
+    try {
+      await api.post("/api/roles", { role: "teacher" });
+    } catch (roleError) {
+      console.error("Failed to assign teacher role:", roleError);
+    }
+    return { error: null };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await authClient.signOut();
   };
 
+  const user = session?.user
+    ? {
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name,
+      }
+    : null;
+
   return (
-    <AuthContext.Provider value={{ user, session, signIn, signUp, signOut, loading }}>
+    <AuthContext.Provider
+      value={{ user, signIn, signUp, signOut, loading: isPending }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -1,29 +1,19 @@
-import { supabase } from "@/integrations/supabase/client";
-
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
-
-async function getAccessToken(): Promise<string | null> {
-  const { data } = await supabase.auth.getSession();
-  return data.session?.access_token ?? null;
-}
 
 export async function apiFetch<T = unknown>(
   path: string,
   init: RequestInit = {},
 ): Promise<T> {
-  const token = await getAccessToken();
   const headers = new Headers(init.headers);
 
   if (!headers.has("Content-Type") && init.body) {
     headers.set("Content-Type", "application/json");
   }
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
 
   const response = await fetch(`${API_BASE}${path}`, {
     ...init,
     headers,
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -59,6 +49,11 @@ export const api = {
   put: <T = unknown>(path: string, body?: unknown) =>
     apiFetch<T>(path, {
       method: "PUT",
+      body: body === undefined ? undefined : JSON.stringify(body),
+    }),
+  patch: <T = unknown>(path: string, body?: unknown) =>
+    apiFetch<T>(path, {
+      method: "PATCH",
       body: body === undefined ? undefined : JSON.stringify(body),
     }),
   delete: <T = unknown>(path: string) =>

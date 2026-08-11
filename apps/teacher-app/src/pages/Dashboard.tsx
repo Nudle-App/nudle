@@ -3,20 +3,49 @@ import { KPICard } from "@/components/Dashboard/KPICard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@nudle/ui/card";
 import { Progress } from "@nudle/ui/progress";
 import { Badge } from "@nudle/ui/badge";
+import { useDashboard } from "@/hooks/useTeacherData";
 
 const Dashboard = () => {
+  const { data, isLoading, error } = useDashboard();
+
   const kpiData = [
-    { title: "Total Courses", value: 24, icon: BookOpen, trend: { value: "12%", positive: true } },
-    { title: "Enrolled Students", value: 342, icon: Users, trend: { value: "8%", positive: true } },
-    { title: "Completed Assessments", value: 156, icon: CheckCircle, trend: { value: "23%", positive: true } },
-    { title: "Pending Tasks", value: 8, icon: AlertCircle, trend: { value: "5%", positive: false } },
+    {
+      title: "Total Courses",
+      value: data?.kpis.totalCourses ?? 0,
+      icon: BookOpen,
+      trend: { value: "", positive: true },
+    },
+    {
+      title: "Enrolled Students",
+      value: data?.kpis.enrolledStudents ?? 0,
+      icon: Users,
+      trend: { value: "", positive: true },
+    },
+    {
+      title: "Completed Assessments",
+      value: data?.kpis.completedAssessments ?? 0,
+      icon: CheckCircle,
+      trend: { value: "", positive: true },
+    },
+    {
+      title: "Pending Tasks",
+      value: data?.kpis.pendingTasks ?? 0,
+      icon: AlertCircle,
+      trend: { value: "", positive: false },
+    },
   ];
 
-  const recentActivity = [
-    { title: "Introduction to Biology - Module 3", status: "Grading Needed", priority: "high" },
-    { title: "Advanced Mathematics - Quiz 5", status: "Completed", priority: "low" },
-    { title: "Physics 101 - Lab Report", status: "In Review", priority: "medium" },
-  ];
+  if (isLoading) {
+    return <div className="p-8 text-muted-foreground">Loading dashboard…</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-destructive">
+        Failed to load dashboard. Sign in and ensure the API is running.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -35,23 +64,22 @@ const Dashboard = () => {
         <Card className="bg-gradient-card">
           <CardHeader>
             <CardTitle>Student Progress Overview</CardTitle>
-            <CardDescription>Average completion rates by course</CardDescription>
+            <CardDescription>Assessment completion rates by course</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {[
-              { course: "Introduction to Biology", progress: 85 },
-              { course: "Advanced Mathematics", progress: 72 },
-              { course: "Physics 101", progress: 68 },
-              { course: "Chemistry Basics", progress: 91 },
-            ].map((item, i) => (
-              <div key={i} className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="font-medium">{item.course}</span>
-                  <span className="text-muted-foreground">{item.progress}%</span>
+            {(data?.progress?.length ?? 0) === 0 ? (
+              <p className="text-sm text-muted-foreground">No courses yet. Create one to get started.</p>
+            ) : (
+              data!.progress.map((item, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">{item.course}</span>
+                    <span className="text-muted-foreground">{item.progress}%</span>
+                  </div>
+                  <Progress value={item.progress} className="h-2" />
                 </div>
-                <Progress value={item.progress} className="h-2" />
-              </div>
-            ))}
+              ))
+            )}
           </CardContent>
         </Card>
 
@@ -59,60 +87,32 @@ const Dashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-primary" />
-              AI Insights
+              Recent grading queue
             </CardTitle>
-            <CardDescription>Intelligent recommendations for your attention</CardDescription>
+            <CardDescription>Assignments waiting for your review</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 rounded-lg bg-accent border border-border">
-              <p className="text-sm font-medium mb-2">📊 Performance Alert</p>
-              <p className="text-sm text-muted-foreground">
-                5 students in Biology Module 3 are showing signs of struggle. Consider scheduling review sessions.
-              </p>
-            </div>
-            <div className="p-4 rounded-lg bg-accent border border-border">
-              <p className="text-sm font-medium mb-2">✨ Suggestion</p>
-              <p className="text-sm text-muted-foreground">
-                Grade distribution in Math Quiz 5 suggests the difficulty level was appropriate. Similar format recommended.
-              </p>
-            </div>
-            <div className="p-4 rounded-lg bg-accent border border-border">
-              <p className="text-sm font-medium mb-2">🎯 Engagement Tip</p>
-              <p className="text-sm text-muted-foreground">
-                Students are most active between 2-4 PM. Consider scheduling important announcements during this window.
-              </p>
-            </div>
+          <CardContent className="space-y-3">
+            {(data?.recentActivity?.length ?? 0) === 0 ? (
+              <p className="text-sm text-muted-foreground">No pending submissions.</p>
+            ) : (
+              data!.recentActivity.map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-3 rounded-lg border border-border bg-background"
+                >
+                  <div>
+                    <p className="text-sm font-medium">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.status}</p>
+                  </div>
+                  <Badge variant={item.priority === "high" ? "destructive" : "secondary"}>
+                    {item.priority}
+                  </Badge>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
       </div>
-
-      <Card className="bg-gradient-card">
-        <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Tasks and assessments requiring your attention</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {recentActivity.map((activity, i) => (
-              <div key={i} className="flex items-center justify-between p-4 rounded-lg bg-background hover:bg-accent transition-colors">
-                <div className="flex-1">
-                  <p className="font-medium text-foreground">{activity.title}</p>
-                  <p className="text-sm text-muted-foreground">{activity.status}</p>
-                </div>
-                <Badge 
-                  variant={
-                    activity.priority === "high" ? "destructive" : 
-                    activity.priority === "medium" ? "default" : 
-                    "secondary"
-                  }
-                >
-                  {activity.priority}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

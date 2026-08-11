@@ -13,6 +13,7 @@ import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 import stIgnatiusLogo from "@/assets/st-ignatius-logo.png";
 import { Button } from "@nudle/ui/button";
+import { useMe } from "@/hooks/useTeacherData";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -24,6 +25,25 @@ const menuItems = [
   { icon: MessageSquare, label: "Messages", path: "/messages" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
+
+function SidebarUser() {
+  const { data: me } = useMe();
+  const name = me?.profile?.full_name || me?.email || "Teacher";
+  const email = me?.profile?.email || me?.email || "";
+  const initial = name.charAt(0).toUpperCase();
+
+  return (
+    <div className="flex items-center gap-3 px-4 py-3">
+      <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
+        {initial}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-foreground truncate">{name}</p>
+        <p className="text-xs text-muted-foreground truncate">{email}</p>
+      </div>
+    </div>
+  );
+}
 
 interface SidebarProps {
   isOpen: boolean;
@@ -86,15 +106,7 @@ export const Sidebar = ({ isOpen, mobileOpen, onMobileClose }: SidebarProps) => 
       </nav>
       
       <div className="p-4 border-t border-border">
-        <div className="flex items-center gap-3 px-4 py-3">
-          <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
-            A
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-foreground">Admin User</p>
-            <p className="text-xs text-muted-foreground">admin@nudle.edu</p>
-          </div>
-        </div>
+        <SidebarUser />
       </div>
     </aside>
     </>

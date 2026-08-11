@@ -1,40 +1,36 @@
 import type { NextFunction, Request, Response } from "express";
-import { supabaseAnon, type User } from "../lib/supabase.js";
+import { fromNodeHeaders } from "better-auth/node";
+import { auth, type SessionUser } from "../lib/auth.js";
 
 export type AuthenticatedRequest = Request & {
-  user?: User;
-  accessToken?: string;
+  user?: SessionUser;
 };
 
 export async function requireAuth(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction,
-): Promise<void> {
-  if (!supabaseAnon) {
-    res.status(503).json({ error: "Supabase is not configured on the server" });
-    return;
-  }
+) {
+  try {
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers),
+    });
 
-  const header = req.headers.authorization;
-  if (!header?.startsWith("Bearer ")) {
-    res.status(401).json({ error: "Missing or invalid Authorization header" });
-    return;
-  }
+    if (!session?.user) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
 
-  const token = header.slice("Bearer ".length).trim();
-  if (!token) {
-    res.status(401).json({ error: "Missing access token" });
-    return;
+    req.user = {
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+      image: session.user.image,
+    };
+    next();
+  } catch (err) {
+    res.status(401).json({
+      error: err instanceof Error ? err.message : "Unauthorized",
+    });
   }
-
-  const { data, error } = await supabaseAnon.auth.getUser(token);
-  if (error || !data.user) {
-    res.status(401).json({ error: "Invalid or expired session" });
-    return;
-  }
-
-  req.user = data.user;
-  req.accessToken = token;
-  next();
 }

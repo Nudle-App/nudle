@@ -1,6 +1,6 @@
 # @nudle/landing-page
 
-Static marketing site (HTML/CSS/JS). No React, Vite, Supabase, or Lovable.
+Static marketing site (HTML/CSS/JS). No build step required.
 
 ```bash
 pnpm --filter @nudle/landing-page dev      # http://localhost:5175

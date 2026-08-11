@@ -1,71 +1,34 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@nudle/ui/card";
-import { MessageSquare, Send, Mail } from "lucide-react";
+import { Send } from "lucide-react";
 import { Button } from "@nudle/ui/button";
 import { Textarea } from "@nudle/ui/textarea";
 import { Label } from "@nudle/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@nudle/ui/select";
 import { Input } from "@nudle/ui/input";
 import { useToast } from "@nudle/ui/use-toast";
+import { api } from "@/lib/api";
+import { useCourses, useProfiles } from "@/hooks/useTeacherData";
 
 const Messages = () => {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  
-  const [recipientType, setRecipientType] = useState("");
+  const [recipientType, setRecipientType] = useState<"students" | "staff" | "">("");
   const [selectedRecipient, setSelectedRecipient] = useState("");
   const [dmSubject, setDmSubject] = useState("");
   const [dmMessage, setDmMessage] = useState("");
-  
+  const [sending, setSending] = useState(false);
   const { toast } = useToast();
 
-  const courses = [
-    { id: "all", name: "All Courses" },
-    { id: "bio101", name: "Biology 101" },
-    { id: "math-adv", name: "Math Advanced" },
-    { id: "physics101", name: "Physics 101" },
-    { id: "chem", name: "Chemistry" },
-  ];
+  const { data: courses = [] } = useCourses();
+  const { data: students = [] } = useProfiles("student");
+  const { data: staff = [] } = useProfiles("teacher");
 
-  const recipientTypes = [
-    { id: "staff", name: "Staff" },
-    { id: "students", name: "Students" },
-    { id: "parents", name: "Parents" },
-  ];
+  const recipients =
+    recipientType === "students" ? students : recipientType === "staff" ? staff : [];
 
-  const staff = [
-    { id: "teacher1", name: "Dr. Sarah Johnson" },
-    { id: "teacher2", name: "Prof. Michael Chen" },
-    { id: "admin1", name: "Jane Smith (Admin)" },
-  ];
-
-  const students = [
-    { id: "student1", name: "Alex Thompson" },
-    { id: "student2", name: "Emma Wilson" },
-    { id: "student3", name: "James Brown" },
-  ];
-
-  const parents = [
-    { id: "parent1", name: "Mr. Thompson (Alex's Parent)" },
-    { id: "parent2", name: "Mrs. Wilson (Emma's Parent)" },
-    { id: "parent3", name: "Mr. Brown (James's Parent)" },
-  ];
-
-  const getRecipients = () => {
-    switch (recipientType) {
-      case "staff":
-        return staff;
-      case "students":
-        return students;
-      case "parents":
-        return parents;
-      default:
-        return [];
-    }
-  };
-
-  const handleSendAnnouncement = () => {
+  const handleSendAnnouncement = async () => {
     if (!selectedCourse || !subject || !message) {
       toast({
         title: "Missing Information",
@@ -75,17 +38,49 @@ const Messages = () => {
       return;
     }
 
-    toast({
-      title: "Announcement Sent!",
-      description: `Message sent to students in ${courses.find(c => c.id === selectedCourse)?.name}`,
-    });
+    setSending(true);
+    try {
+      const enrollments = await api.get<
+        { student_id: string; profiles: { id: string; full_name: string } | null }[]
+      >(`/api/courses/${selectedCourse}/enrollments`);
 
-    setSubject("");
-    setMessage("");
+      if (enrollments.length === 0) {
+        toast({ title: "No students enrolled in this course", variant: "destructive" });
+        return;
+      }
+
+      await Promise.all(
+        enrollments.map((e) =>
+          api.post("/api/conversations", {
+            subject: `[Announcement] ${subject}`,
+            recipient_id: e.student_id,
+          }).then(async (conv: { id: string }) => {
+            await api.post(`/api/conversations/${conv.id}/messages`, {
+              content: message,
+            });
+          }),
+        ),
+      );
+
+      toast({
+        title: "Announcement sent",
+        description: `Messaged ${enrollments.length} student(s)`,
+      });
+      setSubject("");
+      setMessage("");
+    } catch (err) {
+      toast({
+        title: "Failed to send announcement",
+        description: err instanceof Error ? err.message : "Error",
+        variant: "destructive",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
-  const handleSendDirectMessage = () => {
-    if (!recipientType || !selectedRecipient || !dmSubject || !dmMessage) {
+  const handleSendDM = async () => {
+    if (!selectedRecipient || !dmSubject || !dmMessage) {
       toast({
         title: "Missing Information",
         description: "Please fill in all fields before sending.",
@@ -94,159 +89,112 @@ const Messages = () => {
       return;
     }
 
-    const recipients = getRecipients();
-    const recipientName = recipients.find(r => r.id === selectedRecipient)?.name;
-
-    toast({
-      title: "Message Sent!",
-      description: `Direct message sent to ${recipientName}`,
-    });
-
-    setSelectedRecipient("");
-    setDmSubject("");
-    setDmMessage("");
+    setSending(true);
+    try {
+      const conv = await api.post<{ id: string }>("/api/conversations", {
+        subject: dmSubject,
+        recipient_id: selectedRecipient,
+      });
+      await api.post(`/api/conversations/${conv.id}/messages`, { content: dmMessage });
+      toast({ title: "Message sent" });
+      setDmSubject("");
+      setDmMessage("");
+      setSelectedRecipient("");
+    } catch (err) {
+      toast({
+        title: "Failed to send message",
+        description: err instanceof Error ? err.message : "Error",
+        variant: "destructive",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Messages</h1>
-        <p className="text-muted-foreground">Communicate with students and staff</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Messages</h1>
+        <p className="text-muted-foreground">Announce to a course or message someone directly</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="bg-gradient-card">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
-              Mass Announcement
-            </CardTitle>
-            <CardDescription>Send announcements to students enrolled in your courses</CardDescription>
+            <CardTitle>Course announcement</CardTitle>
+            <CardDescription>Starts a conversation with each enrolled student</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="course">Select Course</Label>
+              <Label>Course</Label>
               <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                <SelectTrigger id="course">
-                  <SelectValue placeholder="Choose a course" />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select course" /></SelectTrigger>
                 <SelectContent>
-                  {courses.map((course) => (
-                    <SelectItem key={course.id} value={course.id}>
-                      {course.name}
-                    </SelectItem>
+                  {courses.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
-                placeholder="Enter announcement subject"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-              />
+              <Label>Subject</Label>
+              <Input value={subject} onChange={(e) => setSubject(e.target.value)} />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="message">Message</Label>
-              <Textarea
-                id="message"
-                placeholder="Type your announcement message..."
-                rows={6}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
+              <Label>Message</Label>
+              <Textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={5} />
             </div>
-
-            <Button 
-              variant="default"
-              className="w-full gap-2" 
-              onClick={handleSendAnnouncement}
-            >
-              <Send className="h-4 w-4" />
-              Send Announcement
+            <Button onClick={() => void handleSendAnnouncement()} disabled={sending} className="gap-2">
+              <Send className="h-4 w-4" /> Send announcement
             </Button>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-card">
+        <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Mail className="h-5 w-5" />
-              Direct Message
-            </CardTitle>
-            <CardDescription>Send private messages to staff, students, or parents</CardDescription>
+            <CardTitle>Direct message</CardTitle>
+            <CardDescription>Message a student or fellow teacher</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="recipientType">Recipient Type</Label>
-              <Select value={recipientType} onValueChange={(value) => {
-                setRecipientType(value);
-                setSelectedRecipient("");
-              }}>
-                <SelectTrigger id="recipientType">
-                  <SelectValue placeholder="Choose recipient type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {recipientTypes.map((type) => (
-                    <SelectItem key={type.id} value={type.id}>
-                      {type.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="recipient">Select Recipient</Label>
-              <Select 
-                value={selectedRecipient} 
-                onValueChange={setSelectedRecipient}
-                disabled={!recipientType}
+              <Label>Recipient type</Label>
+              <Select
+                value={recipientType}
+                onValueChange={(v) => {
+                  setRecipientType(v as "students" | "staff");
+                  setSelectedRecipient("");
+                }}
               >
-                <SelectTrigger id="recipient">
-                  <SelectValue placeholder={recipientType ? "Choose recipient" : "Select type first"} />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                 <SelectContent>
-                  {getRecipients().map((recipient) => (
-                    <SelectItem key={recipient.id} value={recipient.id}>
-                      {recipient.name}
+                  <SelectItem value="students">Students</SelectItem>
+                  <SelectItem value="staff">Teachers</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Recipient</Label>
+              <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
+                <SelectTrigger><SelectValue placeholder="Select recipient" /></SelectTrigger>
+                <SelectContent>
+                  {recipients.map((r) => (
+                    <SelectItem key={r.id} value={r.id}>
+                      {r.full_name} ({r.email})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="dmSubject">Subject</Label>
-              <Input
-                id="dmSubject"
-                placeholder="Enter message subject"
-                value={dmSubject}
-                onChange={(e) => setDmSubject(e.target.value)}
-              />
+              <Label>Subject</Label>
+              <Input value={dmSubject} onChange={(e) => setDmSubject(e.target.value)} />
             </div>
-
             <div className="space-y-2">
-              <Label htmlFor="dmMessage">Message</Label>
-              <Textarea
-                id="dmMessage"
-                placeholder="Type your message..."
-                rows={6}
-                value={dmMessage}
-                onChange={(e) => setDmMessage(e.target.value)}
-              />
+              <Label>Message</Label>
+              <Textarea value={dmMessage} onChange={(e) => setDmMessage(e.target.value)} rows={5} />
             </div>
-
-            <Button 
-              className="w-full bg-gradient-primary text-white gap-2" 
-              onClick={handleSendDirectMessage}
-            >
-              <Send className="h-4 w-4" />
-              Send Message
+            <Button onClick={() => void handleSendDM()} disabled={sending} className="gap-2">
+              <Send className="h-4 w-4" /> Send message
             </Button>
           </CardContent>
         </Card>

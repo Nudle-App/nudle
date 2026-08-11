@@ -7,6 +7,7 @@ import { Separator } from "@nudle/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@nudle/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@nudle/ui/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface HeaderProps {
   onAskNudle: () => void;
@@ -18,13 +19,15 @@ interface HeaderProps {
 export const Header = ({ onAskNudle, onToggleSidebar, onToggleMobileSidebar, sidebarOpen }: HeaderProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signOut } = useAuth();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    await signOut();
     toast({
       title: "Signed out successfully",
       description: "You have been logged out of your account",
     });
-    navigate("/");
+    navigate("/auth");
   };
 
   return (
@@ -129,7 +132,10 @@ export const Header = ({ onAskNudle, onToggleSidebar, onToggleMobileSidebar, sid
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleSignOut} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              <AlertDialogAction
+                onClick={() => void handleSignOut()}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
                 Sign Out
               </AlertDialogAction>
             </AlertDialogFooter>
