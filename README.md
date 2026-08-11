@@ -8,7 +8,7 @@ pnpm + Turborepo workspace for the Nudle student app, teacher app, landing page,
 apps/
   student-app/   # Vite React (port 5173)
   teacher-app/   # Vite React (port 5174)
-  landing-page/  # Vite React (port 5175)
+  landing-page/  # Static HTML (port 5175)
   server/        # Express + Supabase (port 3001)
 packages/
   ui/            # Shared shadcn/ui library (@nudle/ui)
@@ -22,7 +22,7 @@ pnpm install
 cp apps/server/.env.example apps/server/.env   # server Supabase keys
 ```
 
-Each Vite app needs its own `.env` with `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (see root `.env.example`).
+Student and teacher apps need their own `.env` with `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` (see root `.env.example`). The landing page is static and needs no env.
 
 ## Develop
 
