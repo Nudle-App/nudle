@@ -168,6 +168,7 @@ export function useMe() {
         email?: string;
         profile: { full_name: string; email: string } | null;
         roles: string[];
+        preferences?: { theme: "light" | "dark" | "system" };
       }>("/api/me"),
   });
 }

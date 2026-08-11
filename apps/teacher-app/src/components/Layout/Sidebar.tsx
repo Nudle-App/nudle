@@ -1,13 +1,13 @@
-import { 
-  LayoutDashboard, 
-  BookOpen, 
-  GraduationCap, 
-  MessageSquare, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  BookOpen,
+  GraduationCap,
+  MessageSquare,
+  BarChart3,
   Settings,
   Calendar,
   FileText,
-  X
+  X,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
@@ -33,12 +33,12 @@ function SidebarUser() {
   const initial = name.charAt(0).toUpperCase();
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
-      <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
+    <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-muted/60">
+      <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
         {initial}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate">{name}</p>
+        <p className="text-sm font-semibold truncate">{name}</p>
         <p className="text-xs text-muted-foreground truncate">{email}</p>
       </div>
     </div>
@@ -54,61 +54,53 @@ interface SidebarProps {
 export const Sidebar = ({ isOpen, mobileOpen, onMobileClose }: SidebarProps) => {
   return (
     <>
-      {/* Mobile Backdrop */}
       {mobileOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={onMobileClose}
-        />
+        <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={onMobileClose} />
       )}
-      
-      {/* Sidebar */}
-      <aside className={cn(
-        "w-64 bg-card border-r border-border flex flex-col h-screen fixed left-0 top-0 shadow-fluent z-50 transition-all duration-200",
-        // Mobile behavior: slide in/out based on mobileOpen
-        !mobileOpen && "-translate-x-full lg:translate-x-0",
-        // Desktop behavior: always visible unless isOpen is false
-        mobileOpen && "translate-x-0",
-        !isOpen && "lg:-translate-x-full"
-      )}>
-      <div className="p-6 border-b border-border bg-background/50">
-        <div className="flex items-center justify-between">
+
+      <aside
+        className={cn(
+          "w-64 bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col h-screen fixed left-0 top-0 z-50 transition-all duration-200",
+          !mobileOpen && "-translate-x-full lg:translate-x-0",
+          mobileOpen && "translate-x-0",
+          !isOpen && "lg:-translate-x-full",
+        )}
+      >
+        <div className="p-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={stIgnatiusLogo} alt="St Ignatius College" className="h-12 w-auto" />
+            <img src={stIgnatiusLogo} alt="St Ignatius College" className="h-10 w-auto" />
+            <div>
+              <p className="text-sm font-semibold tracking-tight">Nudle</p>
+              <p className="text-xs text-muted-foreground">Teacher</p>
+            </div>
           </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onMobileClose}
-            className="lg:hidden"
-          >
+          <Button variant="ghost" size="icon" onClick={onMobileClose} className="lg:hidden rounded-full">
             <X className="h-5 w-5" />
           </Button>
         </div>
-      </div>
-      
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {menuItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            end={item.path === "/"}
-            className={cn(
-              "flex items-center gap-3 px-4 py-2.5 rounded transition-all duration-150",
-              "text-foreground hover:bg-accent hover:text-accent-foreground"
-            )}
-            activeClassName="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground shadow-sm font-semibold"
-          >
-            <item.icon className="h-5 w-5" />
-            <span className="font-medium">{item.label}</span>
-          </NavLink>
-        ))}
-      </nav>
-      
-      <div className="p-4 border-t border-border">
-        <SidebarUser />
-      </div>
-    </aside>
+
+        <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
+          {menuItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === "/"}
+              className={cn(
+                "flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-colors",
+                "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              )}
+              activeClassName="bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground font-semibold shadow-sm"
+            >
+              <item.icon className="h-4 w-4" />
+              <span className="text-sm">{item.label}</span>
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="p-3 border-t border-sidebar-border">
+          <SidebarUser />
+        </div>
+      </aside>
     </>
   );
 };

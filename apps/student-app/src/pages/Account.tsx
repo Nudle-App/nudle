@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
-import { Card } from "@nudle/ui/card";
 import { Button } from "@nudle/ui/button";
 import { Avatar, AvatarFallback } from "@nudle/ui/avatar";
 import { LogOut, User as UserIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@nudle/ui/use-toast";
+import { Badge } from "@nudle/ui/badge";
 
 interface Profile {
   id: string;
@@ -44,6 +44,9 @@ export default function Account() {
     navigate("/auth");
   };
 
+  const displayName = profile?.full_name || user?.name || "Student";
+  const displayEmail = profile?.email || user?.email || "N/A";
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -55,43 +58,53 @@ export default function Account() {
 
   return (
     <div className="space-y-6">
-      <div className="mb-8 flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold mb-2">My Account</h1>
-          <p className="text-muted-foreground">Manage your profile and preferences</p>
+          <h1 className="page-title">My Account</h1>
+          <p className="page-subtitle mt-1">Manage your profile and preferences</p>
         </div>
-        <Button variant="destructive" onClick={handleSignOut}>
+        <Button
+          variant="destructive"
+          className="rounded-full"
+          onClick={() => void handleSignOut()}
+        >
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out
         </Button>
       </div>
 
-      <Card className="p-6 bg-gradient-card border-2 border-border shadow-card">
-        <div className="flex items-center gap-4 mb-6">
-          <Avatar className="h-20 w-20">
-            <AvatarFallback className="text-2xl font-bold bg-gradient-primary">
-              {profile ? getInitials(profile.full_name) : <UserIcon />}
+      <div className="surface-card p-6 md:p-8">
+        <div className="flex items-center gap-4 mb-8">
+          <Avatar className="h-20 w-20 border border-border/80 shadow-sm">
+            <AvatarFallback className="text-2xl font-semibold bg-muted">
+              {displayName !== "Student" ? (
+                getInitials(displayName)
+              ) : (
+                <UserIcon className="h-8 w-8" />
+              )}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-2xl font-bold">{profile?.full_name || "Loading..."}</h2>
-            <p className="text-muted-foreground">Student</p>
+            <h2 className="text-2xl font-semibold tracking-tight">{displayName}</h2>
+            <div className="flex items-center gap-2 mt-2">
+              <Badge variant="secondary" className="rounded-full">
+                Student
+              </Badge>
+            </div>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">Email</p>
-              <p className="font-semibold">{profile?.email || user?.email || "N/A"}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground mb-1">User ID</p>
-              <p className="font-semibold text-xs">{user?.id || "N/A"}</p>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-2xl border border-border/80 bg-muted/30 p-4">
+            <p className="text-sm text-muted-foreground mb-1">Email</p>
+            <p className="font-medium break-all">{displayEmail}</p>
+          </div>
+          <div className="rounded-2xl border border-border/80 bg-muted/30 p-4">
+            <p className="text-sm text-muted-foreground mb-1">User ID</p>
+            <p className="font-medium text-xs break-all">{user?.id || "N/A"}</p>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

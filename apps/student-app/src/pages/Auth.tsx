@@ -75,25 +75,37 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-6">
+      <Card className="w-full max-w-md surface-card border-border/80 shadow-elevated">
+        <CardHeader className="space-y-4 text-center pb-2">
           <div className="flex justify-center">
-            <img src={stIgnatiusLogo} alt="St Ignatius College" className="h-20 w-auto" />
+            <img
+              src={stIgnatiusLogo}
+              alt="St Ignatius College"
+              className="h-16 w-auto"
+            />
           </div>
-          <CardTitle className="text-2xl text-center">Student Portal</CardTitle>
-          <CardDescription className="text-center">
-            Sign in to access your account
-          </CardDescription>
+          <div>
+            <CardTitle className="text-2xl font-semibold tracking-tight">
+              Student Portal
+            </CardTitle>
+            <CardDescription className="mt-1.5">
+              Sign in to access your courses and assignments
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 rounded-full p-1 h-auto bg-muted">
+              <TabsTrigger value="signin" className="rounded-full">
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger value="signup" className="rounded-full">
+                Sign Up
+              </TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="signin">
+
+            <TabsContent value="signin" className="mt-6">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signin-email">Email</Label>
@@ -103,6 +115,7 @@ export default function Auth() {
                     placeholder="your.email@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="rounded-xl"
                     required
                   />
                 </div>
@@ -113,16 +126,21 @@ export default function Auth() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="rounded-xl"
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Signing in..." : "Sign In"}
+                <Button
+                  type="submit"
+                  className="w-full rounded-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Signing in…" : "Sign In"}
                 </Button>
               </form>
             </TabsContent>
-            
-            <TabsContent value="signup">
+
+            <TabsContent value="signup" className="mt-6">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signup-name">Full Name</Label>
@@ -132,6 +150,7 @@ export default function Auth() {
                     placeholder="John Doe"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
+                    className="rounded-xl"
                     required
                   />
                 </div>
@@ -143,6 +162,7 @@ export default function Auth() {
                     placeholder="your.email@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="rounded-xl"
                     required
                   />
                 </div>
@@ -153,12 +173,17 @@ export default function Auth() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="rounded-xl"
                     required
                     minLength={6}
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Creating account..." : "Sign Up"}
+                <Button
+                  type="submit"
+                  className="w-full rounded-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating account…" : "Sign Up"}
                 </Button>
               </form>
             </TabsContent>

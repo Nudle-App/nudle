@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Dashboard from "./pages/Dashboard";
 import Assignments from "./pages/Assignments";
 import Subjects from "./pages/Subjects";
@@ -38,127 +39,128 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Dashboard />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/courses"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Courses />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/assignments"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Assignments />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/calendar"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Calendar />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/subjects"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Subjects />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/report-card"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <ReportCard />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/inbox"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Inbox />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/insights"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Insights />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/notices"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Notices />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/account"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Account />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <Layout>
-                    <Settings />
-                  </Layout>
-                </ProtectedRoute>
-              }
-            />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/auth" element={<Auth />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Dashboard />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/courses"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Courses />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/assignments"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Assignments />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/calendar"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Calendar />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/subjects"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Subjects />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/report-card"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <ReportCard />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/inbox"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Inbox />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/insights"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Insights />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/notices"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Notices />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/account"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Account />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Settings />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

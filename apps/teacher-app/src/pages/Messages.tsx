@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@nudle/ui/card";
 import { Send } from "lucide-react";
 import { Button } from "@nudle/ui/button";
 import { Textarea } from "@nudle/ui/textarea";
@@ -112,23 +111,25 @@ const Messages = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Messages</h1>
-        <p className="text-muted-foreground">Announce to a course or message someone directly</p>
+        <h1 className="page-title">Messages</h1>
+        <p className="page-subtitle mt-1">Announce to a course or message someone directly</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Course announcement</CardTitle>
-            <CardDescription>Starts a conversation with each enrolled student</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="surface-card p-6">
+          <div className="mb-5">
+            <h2 className="text-lg font-semibold tracking-tight">Course announcement</h2>
+            <p className="page-subtitle mt-0.5">Starts a conversation with each enrolled student</p>
+          </div>
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label>Course</Label>
               <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-                <SelectTrigger><SelectValue placeholder="Select course" /></SelectTrigger>
+                <SelectTrigger className="rounded-full">
+                  <SelectValue placeholder="Select course" />
+                </SelectTrigger>
                 <SelectContent>
                   {courses.map((c) => (
                     <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
@@ -138,24 +139,37 @@ const Messages = () => {
             </div>
             <div className="space-y-2">
               <Label>Subject</Label>
-              <Input value={subject} onChange={(e) => setSubject(e.target.value)} />
+              <Input
+                className="rounded-xl"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Message</Label>
-              <Textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={5} />
+              <Textarea
+                className="rounded-xl"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={5}
+              />
             </div>
-            <Button onClick={() => void handleSendAnnouncement()} disabled={sending} className="gap-2">
+            <Button
+              onClick={() => void handleSendAnnouncement()}
+              disabled={sending}
+              className="rounded-full gap-2"
+            >
               <Send className="h-4 w-4" /> Send announcement
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Direct message</CardTitle>
-            <CardDescription>Message a student or fellow teacher</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <div className="surface-card p-6">
+          <div className="mb-5">
+            <h2 className="text-lg font-semibold tracking-tight">Direct message</h2>
+            <p className="page-subtitle mt-0.5">Message a student or fellow teacher</p>
+          </div>
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label>Recipient type</Label>
               <Select
@@ -165,7 +179,9 @@ const Messages = () => {
                   setSelectedRecipient("");
                 }}
               >
-                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                <SelectTrigger className="rounded-full">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="students">Students</SelectItem>
                   <SelectItem value="staff">Teachers</SelectItem>
@@ -175,7 +191,9 @@ const Messages = () => {
             <div className="space-y-2">
               <Label>Recipient</Label>
               <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
-                <SelectTrigger><SelectValue placeholder="Select recipient" /></SelectTrigger>
+                <SelectTrigger className="rounded-full">
+                  <SelectValue placeholder="Select recipient" />
+                </SelectTrigger>
                 <SelectContent>
                   {recipients.map((r) => (
                     <SelectItem key={r.id} value={r.id}>
@@ -187,17 +205,30 @@ const Messages = () => {
             </div>
             <div className="space-y-2">
               <Label>Subject</Label>
-              <Input value={dmSubject} onChange={(e) => setDmSubject(e.target.value)} />
+              <Input
+                className="rounded-xl"
+                value={dmSubject}
+                onChange={(e) => setDmSubject(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Message</Label>
-              <Textarea value={dmMessage} onChange={(e) => setDmMessage(e.target.value)} rows={5} />
+              <Textarea
+                className="rounded-xl"
+                value={dmMessage}
+                onChange={(e) => setDmMessage(e.target.value)}
+                rows={5}
+              />
             </div>
-            <Button onClick={() => void handleSendDM()} disabled={sending} className="gap-2">
+            <Button
+              onClick={() => void handleSendDM()}
+              disabled={sending}
+              className="rounded-full gap-2"
+            >
               <Send className="h-4 w-4" /> Send message
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

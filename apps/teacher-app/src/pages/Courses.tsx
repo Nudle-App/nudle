@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Plus, Search, MoreVertical, Trash } from "lucide-react";
 import { Button } from "@nudle/ui/button";
 import { Input } from "@nudle/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@nudle/ui/card";
 import { Badge } from "@nudle/ui/badge";
 import {
   DropdownMenu,
@@ -75,20 +74,20 @@ const Courses = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Course Management</h1>
-          <p className="text-muted-foreground">Create and manage your courses</p>
+          <h1 className="page-title">Course Management</h1>
+          <p className="page-subtitle mt-1">Create and manage your courses</p>
         </div>
 
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="rounded-full gap-2">
               <Plus className="h-4 w-4" />
               Create Course
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl rounded-2xl">
             <DialogHeader>
               <DialogTitle>Create New Course</DialogTitle>
               <DialogDescription>Add a new course to your teaching portfolio</DialogDescription>
@@ -101,6 +100,7 @@ const Courses = () => {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g., Introduction to Computer Science"
+                  className="rounded-xl"
                 />
               </div>
               <div className="space-y-2">
@@ -111,9 +111,14 @@ const Courses = () => {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Brief overview of the course..."
                   rows={4}
+                  className="rounded-xl"
                 />
               </div>
-              <Button className="w-full" onClick={() => void handleCreate()} disabled={createCourse.isPending}>
+              <Button
+                className="w-full rounded-full"
+                onClick={() => void handleCreate()}
+                disabled={createCourse.isPending}
+              >
                 Create Course
               </Button>
             </div>
@@ -127,49 +132,54 @@ const Courses = () => {
           placeholder="Search courses..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="pl-10 rounded-full border-border/80 bg-card"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-muted-foreground">No courses yet. Create your first course.</p>
+        <div className="surface-card p-10 text-center">
+          <p className="text-muted-foreground">No courses yet. Create your first course.</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((course) => (
-            <Card key={course.id} className="bg-gradient-card hover:shadow-lg transition-all duration-200 group">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="text-4xl mb-3">{course.thumbnail || "📚"}</div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => void handleDelete(course.id)}
-                      >
-                        <Trash className="h-4 w-4 mr-2" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <CardTitle className="text-xl">{course.title}</CardTitle>
-                <CardDescription>{course.instructor}</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Students:</span>
-                  <span className="font-semibold">{course.students}</span>
-                </div>
-                <Badge variant={course.status === "active" ? "default" : "secondary"}>
+            <div
+              key={course.id}
+              className="surface-card p-6 transition-shadow duration-200 hover:shadow-md group"
+            >
+              <div className="flex items-start justify-between mb-3">
+                <div className="text-3xl">{course.thumbnail || "📚"}</div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="rounded-xl">
+                    <DropdownMenuItem
+                      className="text-destructive"
+                      onClick={() => void handleDelete(course.id)}
+                    >
+                      <Trash className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+              <h3 className="text-xl font-semibold tracking-tight">{course.title}</h3>
+              <p className="text-sm text-muted-foreground mt-1">{course.instructor}</p>
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">{course.students}</span> students
+                </span>
+                <Badge
+                  variant={course.status === "active" ? "default" : "secondary"}
+                  className="rounded-full capitalize"
+                >
                   {course.status}
                 </Badge>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       )}

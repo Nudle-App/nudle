@@ -1,40 +1,43 @@
 import { Bell, Calendar, User } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@nudle/ui/card";
 import { Badge } from "@nudle/ui/badge";
+import { Link } from "react-router-dom";
 
 export default function Notices() {
   const announcements = [
     {
       id: 1,
       title: "Midterm Exam Schedule Released",
-      message: "The midterm examination timetable for Term 3 has been published. Please check your calendar for specific dates and times.",
+      message:
+        "The midterm examination timetable for Term 3 has been published. Please check your calendar for specific dates and times.",
       date: "March 15, 2025",
       author: "Academic Office",
-      type: "exam"
+      type: "exam",
     },
     {
       id: 2,
       title: "Library Hours Extended",
-      message: "The campus library will be open 24/7 starting next week to support students during the examination period.",
+      message:
+        "The campus library will be open 24/7 starting next week to support students during the examination period.",
       date: "March 14, 2025",
       author: "Library Services",
-      type: "info"
+      type: "info",
     },
     {
       id: 3,
       title: "Guest Lecture: AI in Modern Education",
-      message: "Join us for a special lecture by Dr. Sarah Johnson on the role of artificial intelligence in transforming educational practices.",
+      message:
+        "Join us for a special lecture by Dr. Sarah Johnson on the role of artificial intelligence in transforming educational practices.",
       date: "March 12, 2025",
       author: "Computer Science Dept",
-      type: "event"
-    }
+      type: "event",
+    },
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Announcements</h1>
-        <p className="text-muted-foreground">
+        <h1 className="page-title">Announcements</h1>
+        <p className="page-subtitle mt-1">
           Stay updated with the latest news and important notifications.
         </p>
       </div>
@@ -43,63 +46,78 @@ export default function Notices() {
         <div className="lg:col-span-2 space-y-4">
           {announcements.length > 0 ? (
             announcements.map((announcement) => (
-              <Card key={announcement.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <CardTitle className="text-xl mb-2">{announcement.title}</CardTitle>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          {announcement.date}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <User className="h-4 w-4" />
-                          {announcement.author}
-                        </div>
-                      </div>
+              <article key={announcement.id} className="surface-card p-5 md:p-6">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="min-w-0">
+                    <h2 className="text-xl font-semibold tracking-tight mb-2">
+                      {announcement.title}
+                    </h2>
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="h-4 w-4" />
+                        {announcement.date}
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <User className="h-4 w-4" />
+                        {announcement.author}
+                      </span>
                     </div>
-                    <Badge variant={announcement.type === "exam" ? "destructive" : announcement.type === "event" ? "default" : "secondary"}>
-                      {announcement.type}
-                    </Badge>
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{announcement.message}</p>
-                </CardContent>
-              </Card>
+                  <Badge
+                    variant={
+                      announcement.type === "exam"
+                        ? "destructive"
+                        : announcement.type === "event"
+                          ? "default"
+                          : "secondary"
+                    }
+                    className="rounded-full capitalize shrink-0"
+                  >
+                    {announcement.type}
+                  </Badge>
+                </div>
+                <p className="text-muted-foreground leading-relaxed">{announcement.message}</p>
+              </article>
             ))
           ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">There are no announcements to display.</p>
-              </CardContent>
-            </Card>
+            <div className="surface-card py-12 text-center px-6">
+              <Bell className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+              <p className="font-medium">No announcements</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                There are no announcements to display.
+              </p>
+            </div>
           )}
         </div>
 
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Links</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <a href="/calendar" className="block p-3 rounded-lg hover:bg-muted transition-colors">
+        <aside className="space-y-4">
+          <section className="surface-card p-5">
+            <h2 className="text-lg font-semibold mb-4">Quick Links</h2>
+            <div className="space-y-1">
+              <Link
+                to="/calendar"
+                className="block p-3 rounded-2xl hover:bg-hover transition-colors"
+              >
                 <div className="font-medium">Academic Calendar</div>
                 <div className="text-sm text-muted-foreground">View all events</div>
-              </a>
-              <a href="/subjects" className="block p-3 rounded-lg hover:bg-muted transition-colors">
+              </Link>
+              <Link
+                to="/subjects"
+                className="block p-3 rounded-2xl hover:bg-hover transition-colors"
+              >
                 <div className="font-medium">Course Materials</div>
                 <div className="text-sm text-muted-foreground">Access resources</div>
-              </a>
-              <a href="/account" className="block p-3 rounded-lg hover:bg-muted transition-colors">
+              </Link>
+              <Link
+                to="/account"
+                className="block p-3 rounded-2xl hover:bg-hover transition-colors"
+              >
                 <div className="font-medium">Support</div>
                 <div className="text-sm text-muted-foreground">Get help</div>
-              </a>
-            </CardContent>
-          </Card>
-        </div>
+              </Link>
+            </div>
+          </section>
+        </aside>
       </div>
     </div>
   );

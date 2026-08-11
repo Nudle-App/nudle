@@ -2,108 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* Microsoft Fluent Design Colors */
-    --background: 0 0% 98%;
-    --foreground: 0 0% 13%;
+    --background: 40 20% 97%;
+    --foreground: 222 20% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 13%;
+    --card-foreground: 222 20% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 13%;
+    --popover-foreground: 222 20% 12%;
 
-    --primary: 207 90% 54%;
+    --primary: 222 20% 12%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 17% 95%;
-    --secondary-foreground: 0 0% 13%;
+    --secondary: 40 14% 93%;
+    --secondary-foreground: 222 20% 12%;
 
-    --muted: 210 17% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 40 12% 94%;
+    --muted-foreground: 220 10% 42%;
 
-    --accent: 210 20% 92%;
-    --accent-foreground: 207 90% 54%;
+    --accent: 40 14% 92%;
+    --accent-foreground: 222 20% 12%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 88%;
-    --input: 214 20% 93%;
-    --ring: 207 90% 54%;
+    --success: 152 60% 36%;
+    --success-foreground: 0 0% 100%;
 
-    --radius: 0.25rem;
-    
-    /* Microsoft-style shadows - softer and more subtle */
-    --shadow-sm: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.13), 0 0.3px 0.9px 0 rgba(0, 0, 0, 0.11);
-    --shadow-md: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.13), 0 0.6px 1.8px 0 rgba(0, 0, 0, 0.11);
-    --shadow-lg: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.13), 0 1.2px 3.6px 0 rgba(0, 0, 0, 0.11);
-    --shadow-xl: 0 25.6px 57.6px 0 rgba(0, 0, 0, 0.22), 0 4.8px 14.4px 0 rgba(0, 0, 0, 0.18);
-    
-    /* Acrylic effect */
-    --acrylic-bg: rgba(255, 255, 255, 0.7);
-    --acrylic-border: rgba(255, 255, 255, 0.8);
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 20% 12%;
 
-    --sidebar-background: 0 0% 97%;
-    --sidebar-foreground: 0 0% 13%;
-    --sidebar-primary: 207 90% 54%;
+    --border: 40 12% 88%;
+    --input: 40 12% 94%;
+    --ring: 222 20% 12%;
+
+    --radius: 0.875rem;
+
+    --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.04);
+    --shadow-md: 0 4px 16px rgb(15 23 42 / 0.06);
+    --shadow-lg: 0 12px 32px rgb(15 23 42 / 0.08);
+    --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.04);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 14% 28%;
+    --sidebar-primary: 222 20% 12%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 92%;
-    --sidebar-accent-foreground: 0 0% 13%;
-    --sidebar-border: 214 20% 90%;
-    --sidebar-ring: 207 90% 54%;
+    --sidebar-accent: 40 14% 94%;
+    --sidebar-accent-foreground: 222 20% 12%;
+    --sidebar-border: 40 12% 92%;
+    --sidebar-ring: 222 20% 12%;
   }
 
   .dark {
-    --background: 0 0% 12%;
-    --foreground: 0 0% 95%;
+    --background: 222 16% 8%;
+    --foreground: 40 20% 96%;
 
-    --card: 0 0% 16%;
-    --card-foreground: 0 0% 95%;
+    --card: 222 14% 11%;
+    --card-foreground: 40 20% 96%;
 
-    --popover: 0 0% 16%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 222 14% 11%;
+    --popover-foreground: 40 20% 96%;
 
-    --primary: 207 90% 54%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 40 20% 96%;
+    --primary-foreground: 222 20% 12%;
 
-    --secondary: 210 17% 20%;
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 222 12% 16%;
+    --secondary-foreground: 40 20% 96%;
 
-    --muted: 0 0% 20%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 222 12% 15%;
+    --muted-foreground: 220 10% 65%;
 
-    --accent: 210 20% 22%;
-    --accent-foreground: 207 90% 54%;
+    --accent: 222 12% 16%;
+    --accent-foreground: 40 20% 96%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 22%;
-    --input: 0 0% 20%;
-    --ring: 207 90% 54%;
-    
-    --shadow-sm: 0 1.6px 3.6px 0 rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 3.2px 7.2px 0 rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 6.4px 14.4px 0 rgba(0, 0, 0, 0.6);
-    --shadow-xl: 0 25.6px 57.6px 0 rgba(0, 0, 0, 0.7);
-    
-    --acrylic-bg: rgba(32, 32, 32, 0.7);
-    --acrylic-border: rgba(255, 255, 255, 0.1);
-    
-    --sidebar-background: 0 0% 14%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 207 90% 54%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 22%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 22%;
-    --sidebar-ring: 207 90% 54%;
+    --success: 152 50% 42%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 20% 12%;
+
+    --border: 222 12% 18%;
+    --input: 222 12% 15%;
+    --ring: 40 20% 96%;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+    --shadow-md: 0 4px 16px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 12px 32px rgb(0 0 0 / 0.5);
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+
+    --sidebar-background: 222 14% 10%;
+    --sidebar-foreground: 40 14% 82%;
+    --sidebar-primary: 40 20% 96%;
+    --sidebar-primary-foreground: 222 20% 12%;
+    --sidebar-accent: 222 12% 15%;
+    --sidebar-accent-foreground: 40 20% 96%;
+    --sidebar-border: 222 12% 16%;
+    --sidebar-ring: 40 20% 96%;
   }
 }
 
@@ -118,27 +117,23 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  .acrylic {
-    background: var(--acrylic-bg);
-    backdrop-filter: blur(30px);
-    -webkit-backdrop-filter: blur(30px);
-    border: 1px solid var(--acrylic-border);
+  .shadow-card {
+    box-shadow: var(--shadow-card);
   }
-  
-  .fluent-hover {
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.6, 1);
+
+  .surface-card {
+    @apply bg-card text-card-foreground rounded-2xl border border-border/80 shadow-card;
   }
-  
-  .fluent-hover:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+
+  .page-title {
+    @apply text-3xl font-semibold tracking-tight text-foreground;
   }
-  
-  .shadow-fluent {
-    box-shadow: var(--shadow-md);
+
+  .page-subtitle {
+    @apply text-sm text-muted-foreground;
   }
-  
-  .shadow-fluent-lg {
-    box-shadow: var(--shadow-lg);
+
+  .pill {
+    @apply rounded-full;
   }
 }

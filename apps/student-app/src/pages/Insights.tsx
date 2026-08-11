@@ -1,44 +1,42 @@
-import { Card } from "@nudle/ui/card";
-import { TrendingUp, TrendingDown, AlertCircle, Sparkles } from "lucide-react";
+import { TrendingUp, AlertCircle, Sparkles } from "lucide-react";
 import { Badge } from "@nudle/ui/badge";
 
 export default function Insights() {
   return (
     <div className="space-y-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-          <Sparkles className="h-8 w-8 text-primary" />
+      <div>
+        <h1 className="page-title flex items-center gap-2">
+          <Sparkles className="h-7 w-7 text-muted-foreground" />
           AI Insights
         </h1>
-        <p className="text-muted-foreground">
+        <p className="page-subtitle mt-1">
           Personalized learning analytics powered by artificial intelligence
         </p>
       </div>
 
-      {/* Performance Prediction */}
-      <Card className="p-6 bg-gradient-card border-2 border-primary/30 shadow-glow">
+      <section className="surface-card p-6">
         <div className="flex items-start gap-4">
-          <div className="p-3 bg-primary/20 rounded-lg">
-            <TrendingUp className="h-6 w-6 text-primary" />
+          <div className="p-3 rounded-full bg-muted shrink-0">
+            <TrendingUp className="h-5 w-5" />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold mb-2">Performance Prediction</h3>
             <p className="text-muted-foreground mb-4">
-              Based on your current progress and study patterns, our AI predicts you'll reach{" "}
-              <span className="font-bold text-primary">73% average</span> by next term.
+              Based on your current progress and study patterns, our AI predicts you&apos;ll
+              reach <span className="font-semibold text-foreground">73% average</span> by next
+              term.
             </p>
-            <Badge className="bg-primary/20 text-primary border-primary/30">
+            <Badge variant="secondary" className="rounded-full">
               +3.1% Improvement Expected
             </Badge>
           </div>
         </div>
-      </Card>
+      </section>
 
-      {/* Strengths & Weaknesses */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="p-6 bg-gradient-card border-2 border-success/30">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 bg-success/20 rounded-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <section className="surface-card p-6">
+          <div className="flex items-start gap-3 mb-5">
+            <div className="p-2.5 rounded-full bg-success/15 shrink-0">
               <TrendingUp className="h-5 w-5 text-success" />
             </div>
             <div>
@@ -46,74 +44,86 @@ export default function Insights() {
               <p className="text-sm text-muted-foreground">Your strongest subjects</p>
             </div>
           </div>
-          <ul className="space-y-2">
-            <li className="flex justify-between items-center">
+          <ul className="space-y-3">
+            <li className="flex justify-between items-center text-sm">
               <span>General Science</span>
-              <span className="font-semibold text-success">87.33%</span>
+              <Badge variant="secondary" className="rounded-full text-success">
+                87.33%
+              </Badge>
             </li>
-            <li className="flex justify-between items-center">
+            <li className="flex justify-between items-center text-sm">
               <span>French</span>
-              <span className="font-semibold text-success">85%</span>
+              <Badge variant="secondary" className="rounded-full text-success">
+                85%
+              </Badge>
             </li>
-            <li className="flex justify-between items-center">
+            <li className="flex justify-between items-center text-sm">
               <span>Mathematics</span>
-              <span className="font-semibold text-success">78%</span>
+              <Badge variant="secondary" className="rounded-full text-success">
+                78%
+              </Badge>
             </li>
           </ul>
-        </Card>
+        </section>
 
-        <Card className="p-6 bg-gradient-card border-2 border-amber-500/30">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 bg-amber-500/20 rounded-lg">
-              <AlertCircle className="h-5 w-5 text-amber-400" />
+        <section className="surface-card p-6">
+          <div className="flex items-start gap-3 mb-5">
+            <div className="p-2.5 rounded-full bg-amber-500/15 shrink-0">
+              <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-amber-400">Needs Attention</h3>
+              <h3 className="font-semibold text-amber-700 dark:text-amber-400">
+                Needs Attention
+              </h3>
               <p className="text-sm text-muted-foreground">Focus areas for improvement</p>
             </div>
           </div>
-          <ul className="space-y-2">
-            <li className="flex justify-between items-center">
+          <ul className="space-y-3">
+            <li className="flex justify-between items-center text-sm">
               <span>English Literature</span>
-              <span className="font-semibold text-amber-400">72%</span>
+              <Badge variant="secondary" className="rounded-full">
+                72%
+              </Badge>
             </li>
-            <li className="flex justify-between items-center">
+            <li className="flex justify-between items-center text-sm">
               <span>History</span>
-              <span className="font-semibold text-amber-400">68%</span>
+              <Badge variant="secondary" className="rounded-full">
+                68%
+              </Badge>
             </li>
           </ul>
-        </Card>
+        </section>
       </div>
 
-      {/* AI Recommendations */}
-      <Card className="p-6 bg-gradient-card border-2 border-border">
-        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-accent" />
+      <section className="surface-card p-6">
+        <h3 className="text-lg font-semibold mb-5 flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-muted-foreground" />
           Personalized Study Recommendations
         </h3>
-        <div className="space-y-4">
-          <div className="p-4 bg-muted/30 rounded-lg border border-border">
-            <p className="font-medium mb-2">📚 Study Strategy</p>
+        <div className="space-y-3">
+          <div className="p-4 rounded-2xl border border-border/80 bg-muted/30">
+            <p className="font-medium mb-1.5">Study Strategy</p>
             <p className="text-sm text-muted-foreground">
-              Dedicate 30 minutes daily to English Literature. Focus on essay structure and literary
-              analysis techniques to boost your grade.
+              Dedicate 30 minutes daily to English Literature. Focus on essay structure and
+              literary analysis techniques to boost your grade.
             </p>
           </div>
-          <div className="p-4 bg-muted/30 rounded-lg border border-border">
-            <p className="font-medium mb-2">⏰ Time Management</p>
+          <div className="p-4 rounded-2xl border border-border/80 bg-muted/30">
+            <p className="font-medium mb-1.5">Time Management</p>
             <p className="text-sm text-muted-foreground">
-              You're most productive between 6-8 PM. Schedule difficult subjects during this time for
-              maximum retention.
+              You&apos;re most productive between 6–8 PM. Schedule difficult subjects during this
+              time for maximum retention.
             </p>
           </div>
-          <div className="p-4 bg-muted/30 rounded-lg border border-border">
-            <p className="font-medium mb-2">🎯 Next Milestone</p>
+          <div className="p-4 rounded-2xl border border-border/80 bg-muted/30">
+            <p className="font-medium mb-1.5">Next Milestone</p>
             <p className="text-sm text-muted-foreground">
-              Complete 3 more assignments with scores above 80% to move up to rank 14 in your class.
+              Complete 3 more assignments with scores above 80% to move up to rank 14 in your
+              class.
             </p>
           </div>
         </div>
-      </Card>
+      </section>
     </div>
   );
 }
