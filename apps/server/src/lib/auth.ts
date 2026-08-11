@@ -12,12 +12,16 @@ const pool = new Pool({
   ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
 });
 
-const isHttps = (process.env.BETTER_AUTH_URL ?? "").startsWith("https://");
+const baseURL = process.env.BETTER_AUTH_URL ?? "http://localhost:3001";
+// Teacher/student apps are on different origins (Render). Cross-site cookies
+// require SameSite=None; Secure. Keep Lax on plain local http.
+const crossSiteCookies =
+  baseURL.startsWith("https://") || process.env.NODE_ENV === "production";
 
 export const auth = betterAuth({
   database: pool,
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3001",
+  baseURL,
   // Allow any Origin that calls the API (pairs with cors origin: true).
   trustedOrigins: async (request) => {
     const origin = request?.headers.get("origin");
@@ -26,14 +30,20 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  advanced: isHttps
-    ? {
-        defaultCookieAttributes: {
+  advanced: {
+    defaultCookieAttributes: crossSiteCookies
+      ? {
           sameSite: "none",
           secure: true,
+          httpOnly: true,
+          partitioned: true,
+        }
+      : {
+          sameSite: "lax",
+          secure: false,
+          httpOnly: true,
         },
-      }
-    : undefined,
+  },
   user: {
     fields: {
       emailVerified: "email_verified",
