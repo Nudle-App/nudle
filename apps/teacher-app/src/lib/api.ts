@@ -1,12 +1,10 @@
+import { supabase } from "@/integrations/supabase/client";
+
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
-type TokenProvider = () => Promise<string | null>;
-
-let getAccessToken: TokenProvider = async () => null;
-
-/** Call once from your auth layer when Supabase session is available. */
-export function setApiTokenProvider(provider: TokenProvider) {
-  getAccessToken = provider;
+async function getAccessToken(): Promise<string | null> {
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? null;
 }
 
 export async function apiFetch<T = unknown>(
@@ -29,8 +27,19 @@ export async function apiFetch<T = unknown>(
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request failed: ${response.status}`);
+    let message = `Request failed: ${response.status}`;
+    try {
+      const payload = await response.json();
+      if (payload?.error) {
+        message =
+          typeof payload.error === "string"
+            ? payload.error
+            : JSON.stringify(payload.error);
+      }
+    } catch {
+      // ignore
+    }
+    throw new Error(message);
   }
 
   if (response.status === 204) {

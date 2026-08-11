@@ -4,6 +4,7 @@ import { TooltipProvider } from "@nudle/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
+import { AuthProvider } from "@/contexts/AuthContext";
 import { Sidebar } from "@/components/Layout/Sidebar";
 import { Header } from "@/components/Layout/Header";
 import { Footer } from "@/components/Layout/Footer";
@@ -27,6 +28,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -65,6 +67,7 @@ const App = () => {
           <AskNudleDialog open={askNudleOpen} onOpenChange={setAskNudleOpen} />
         </BrowserRouter>
       </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

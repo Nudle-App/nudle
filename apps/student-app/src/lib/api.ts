@@ -27,8 +27,19 @@ export async function apiFetch<T = unknown>(
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request failed: ${response.status}`);
+    let message = `Request failed: ${response.status}`;
+    try {
+      const payload = await response.json();
+      if (payload?.error) {
+        message =
+          typeof payload.error === "string"
+            ? payload.error
+            : JSON.stringify(payload.error);
+      }
+    } catch {
+      // ignore parse errors
+    }
+    throw new Error(message);
   }
 
   if (response.status === 204) {

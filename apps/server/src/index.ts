@@ -2,8 +2,11 @@ import "./env.js";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import { aiRouter } from "./routes/ai.js";
+import { conversationsRouter } from "./routes/conversations.js";
 import { healthRouter } from "./routes/health.js";
 import { meRouter } from "./routes/me.js";
+import { profilesRouter } from "./routes/profiles.js";
 
 const app = express();
 const port = Number(process.env.PORT) || 3001;
@@ -24,6 +27,9 @@ app.use(express.json());
 
 app.use("/api", healthRouter);
 app.use("/api", meRouter);
+app.use("/api", profilesRouter);
+app.use("/api", conversationsRouter);
+app.use("/api", aiRouter);
 
 app.get("/", (_req, res) => {
   res.json({ name: "@nudle/server", docs: "/api/health" });

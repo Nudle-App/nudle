@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { MessageSquare, Send, X, Sparkles } from "lucide-react";
+import { Send, X, Sparkles } from "lucide-react";
 import { Button } from "@nudle/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@nudle/ui/card";
 import { Input } from "@nudle/ui/input";
 import { ScrollArea } from "@nudle/ui/scroll-area";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api";
 import { useToast } from "@nudle/ui/use-toast";
 
 type Message = {
@@ -24,28 +24,27 @@ export function AIAssistant() {
 
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
+    const prompt = input;
     setInput("");
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("ai-assistant", {
-        body: { message: input },
+      const data = await api.post<{ message: string }>("/api/ai/assistant", {
+        message: prompt,
       });
 
-      if (error) {
-        throw error;
-      }
-
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: data.message,
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error: any) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.message },
+      ]);
+    } catch (error: unknown) {
       console.error("Error calling AI assistant:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to get AI response. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to get AI response. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -56,7 +55,7 @@ export function AIAssistant() {
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      void sendMessage();
     }
   };
 
@@ -134,7 +133,7 @@ export function AIAssistant() {
               placeholder="Ask about your studies..."
               disabled={isLoading}
             />
-            <Button onClick={sendMessage} disabled={isLoading || !input.trim()}>
+            <Button onClick={() => void sendMessage()} disabled={isLoading || !input.trim()}>
               <Send className="h-4 w-4" />
             </Button>
           </div>

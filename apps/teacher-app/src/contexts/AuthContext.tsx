@@ -38,28 +38,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
-        },
+        emailRedirectTo: `${window.location.origin}/`,
+        data: { full_name: fullName },
       },
     });
 
-    // Profile creation goes through the API (not direct Supabase DB access).
     if (!error && data.user && data.session) {
       try {
         await api.post("/api/profiles", { email, full_name: fullName });

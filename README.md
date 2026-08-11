@@ -39,7 +39,7 @@ pnpm dev:teacher
 pnpm dev:landing
 ```
 
-Frontends proxy `/api` to the Express server. Use `api` from `@/lib/api` to call authenticated endpoints with the Supabase session token.
+**Architecture:** frontends use Supabase **only for auth**. All data/AI goes through Express (`@/lib/api` attaches the Supabase access token). Local Vite apps proxy `/api` → `localhost:3001`.
 
 ## Shared UI
 

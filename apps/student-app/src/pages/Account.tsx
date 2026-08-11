@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api";
 import { Card } from "@nudle/ui/card";
 import { Button } from "@nudle/ui/button";
 import { Avatar, AvatarFallback } from "@nudle/ui/avatar";
@@ -22,21 +22,16 @@ export default function Account() {
 
   useEffect(() => {
     if (user) {
-      fetchProfile();
+      void fetchProfile();
     }
   }, [user]);
 
   const fetchProfile = async () => {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user?.id)
-      .single();
-
-    if (error) {
-      console.error("Error fetching profile:", error);
-    } else {
+    try {
+      const data = await api.get<Profile | null>("/api/profiles/me");
       setProfile(data);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
     }
   };
 
@@ -83,7 +78,7 @@ export default function Account() {
             <p className="text-muted-foreground">Student</p>
           </div>
         </div>
-        
+
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
