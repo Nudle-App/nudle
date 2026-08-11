@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="NUDLE">
+  <rect width="64" height="64" rx="14" fill="#F7F5F1"/>
+  <g fill="none" stroke="#1F2430" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 16 10 26l22 10 22-10-22-10Z"/>
+    <path d="M18 30.5V40c0 5.5 6.3 10 14 10s14-4.5 14-10v-9.5"/>
+    <path d="M54 26v14"/>
+    <path d="M54 40c0 2.2-1.6 3.2-3.5 2.4"/>
+  </g>
+  <circle cx="32" cy="26" r="2.2" fill="#1F2430"/>
+</svg>

@@ -8,6 +8,7 @@ import { aiRouter } from "./routes/ai.js";
 import { attendanceRouter } from "./routes/attendance.js";
 import { conversationsRouter } from "./routes/conversations.js";
 import { coursesRouter } from "./routes/courses.js";
+import { demoRequestsRouter } from "./routes/demo-requests.js";
 import { healthRouter } from "./routes/health.js";
 import { meRouter } from "./routes/me.js";
 import { profilesRouter } from "./routes/profiles.js";
@@ -33,6 +34,7 @@ app.all("/api/auth/*", toNodeHandler(auth));
 app.use(express.json());
 
 app.use("/api", healthRouter);
+app.use("/api", demoRequestsRouter);
 app.use("/api", meRouter);
 app.use("/api", profilesRouter);
 app.use("/api", rolesRouter);
