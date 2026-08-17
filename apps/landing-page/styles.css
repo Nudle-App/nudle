@@ -677,15 +677,17 @@ main {
 
 .mock__float--insight {
   top: 18%;
-  right: -1rem;
+  right: 1.25rem;
   max-width: 15.5rem;
+  z-index: 2;
 }
 
 .mock__float--grade {
   bottom: 42%;
-  left: -1rem;
+  left: 4.75rem; /* sit over the main panel, clear of the sidebar */
   align-items: center;
   animation-delay: -3s;
+  z-index: 2;
 }
 
 @keyframes float-card {
