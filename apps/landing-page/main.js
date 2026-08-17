@@ -55,6 +55,77 @@ if ("IntersectionObserver" in window) {
   revealItems.forEach((el) => el.classList.add("is-visible"));
 }
 
+// Pinned features scrollytelling: the stage sticks while the user scrolls
+// through the tall track; scroll progress scrubs one full-width panel in
+// (and the previous one out) at a time.
+const featuresTrack = document.querySelector("[data-features-track]");
+const featurePanels = Array.from(document.querySelectorAll("[data-feature-panel]"));
+const featureSegs = Array.from(document.querySelectorAll("[data-feature-seg]"));
+
+if (featuresTrack && featurePanels.length) {
+  const reducedMotionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const desktopMq = window.matchMedia("(min-width: 821px)");
+  const count = featurePanels.length;
+  let ticking = false;
+  let wasActive = false;
+
+  function clearStyles() {
+    featurePanels.forEach((panel) => {
+      panel.style.opacity = "";
+      panel.style.transform = "";
+      panel.style.pointerEvents = "";
+    });
+  }
+
+  function updatePanels() {
+    ticking = false;
+
+    const active = desktopMq.matches && !reducedMotionMq.matches;
+    if (!active) {
+      if (wasActive) clearStyles();
+      wasActive = false;
+      return;
+    }
+    wasActive = true;
+
+    const rect = featuresTrack.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const scrollable = rect.height - vh;
+    const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+
+    featurePanels.forEach((panel, i) => {
+      // Signed distance from this panel's "center of attention", in panels.
+      let d = (progress - (i + 0.5) / count) * count;
+      // First panel is already in place on arrival; last one holds at the end.
+      if (i === 0) d = Math.max(d, 0);
+      if (i === count - 1) d = Math.min(d, 0);
+
+      // Fully visible while |d| < 0.24, fading to nothing by |d| = 0.5
+      const alpha = Math.min(1, Math.max(0, 1 - (Math.abs(d) - 0.24) / 0.26));
+
+      panel.style.opacity = alpha.toFixed(3);
+      panel.style.transform = `translateY(${(-d * 130).toFixed(1)}px) scale(${(0.95 + alpha * 0.05).toFixed(3)})`;
+      panel.style.pointerEvents = alpha > 0.5 ? "auto" : "none";
+    });
+
+    featureSegs.forEach((seg, i) => {
+      const fill = Math.min(1, Math.max(0, progress * count - i));
+      seg.style.setProperty("--fill", fill.toFixed(3));
+    });
+  }
+
+  function requestPanelsUpdate() {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(updatePanels);
+    }
+  }
+
+  window.addEventListener("scroll", requestPanelsUpdate, { passive: true });
+  window.addEventListener("resize", requestPanelsUpdate);
+  updatePanels();
+}
+
 const form = document.querySelector("[data-demo-form]");
 const statusEl = document.querySelector("[data-demo-status]");
 const submitBtn = document.querySelector("[data-demo-submit]");

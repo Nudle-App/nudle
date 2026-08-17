@@ -6,12 +6,12 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/favicon-180.png" />
-    <title>NUDLE</title>
+    <title>Kleva — Teaching and learning, connected by insight</title>
     <meta
       name="description"
-      content="AI-powered education platform that helps students learn, teachers teach, and schools grow."
+      content="Kleva — AI-powered education platform that helps students learn, teachers teach, and schools grow."
     />
-    <meta property="og:title" content="NUDLE" />
+    <meta property="og:title" content="Kleva" />
     <meta
       property="og:description"
       content="Transform education with AI-powered analytics and personalized learning tools."
@@ -20,7 +20,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css" />
@@ -28,8 +28,9 @@
   <body>
     <header class="nav">
       <div class="container nav__inner">
-        <a class="nav__brand" href="/" aria-label="NUDLE home">
-          <img src="/assets/nudle-logo.png" alt="NUDLE" />
+        <a class="nav__brand" href="/" aria-label="Kleva home">
+          <img class="brand-mark" src="/assets/kleva-mark.svg" alt="" />
+          <span class="brand-word">Kleva</span>
         </a>
 
         <nav class="nav__links" aria-label="Primary">
@@ -70,67 +71,212 @@
     </header>
 
     <main>
+      <!-- ======================== HERO ======================== -->
       <section class="hero">
         <div class="hero__atmosphere" aria-hidden="true"></div>
+        <canvas id="hero-canvas" class="hero__canvas" aria-hidden="true"></canvas>
         <div class="container hero__content is-visible" data-reveal>
-          <img class="hero__mark" src="/assets/nudle-logo.png" alt="NUDLE" />
-          <h1>Teaching and learning, connected by insight.</h1>
-          <p>
-            One platform for educators, students, and institutions — with AI that surfaces
-            what matters next.
+          <p class="hero__badge">
+            <span class="hero__badge-dot" aria-hidden="true"></span>
+            AI-powered learning analytics
+          </p>
+          <h1>
+            Teaching and learning,<br />
+            connected by <em>insight</em>.
+          </h1>
+          <p class="hero__sub">
+            One calm platform for educators, students, and institutions — with AI that
+            surfaces what matters next, before it shows up on the report card.
           </p>
           <div class="hero__ctas">
             <a class="btn btn--primary btn--lg" href="#demo">Request a demo</a>
             <a class="btn btn--secondary btn--lg" href="#features">See how it works</a>
           </div>
         </div>
-        <div class="hero__stage">
-          <img
-            src="/assets/dashboard-institutions.png"
-            alt="Nudle dashboard showing courses, analytics, and student progress"
-          />
-        </div>
-      </section>
 
-      <section id="features" class="section">
-        <div class="container">
-          <div class="section__intro" data-reveal>
-            <h2>Built for the full school day</h2>
-            <p>From the classroom to the report card — clarity without the clutter.</p>
+        <!-- CSS-built product mockup -->
+        <div class="hero__stage" aria-hidden="true">
+          <div class="mock">
+            <div class="mock__chrome">
+              <span></span><span></span><span></span>
+              <div class="mock__url">app.kleva.io/dashboard</div>
+            </div>
+            <div class="mock__body">
+              <aside class="mock__side">
+                <div class="mock__side-brand">
+                  <img src="/assets/kleva-mark.svg" alt="" />
+                </div>
+                <div class="mock__side-item is-active"></div>
+                <div class="mock__side-item"></div>
+                <div class="mock__side-item"></div>
+                <div class="mock__side-item"></div>
+              </aside>
+              <div class="mock__main">
+                <div class="mock__topbar">
+                  <div class="mock__title-line"></div>
+                  <div class="mock__avatar"></div>
+                </div>
+                <div class="mock__stats">
+                  <div class="mock__stat">
+                    <span class="mock__stat-label">Class average</span>
+                    <span class="mock__stat-value">87%</span>
+                    <span class="mock__stat-delta is-up">▲ 4.2</span>
+                  </div>
+                  <div class="mock__stat">
+                    <span class="mock__stat-label">Assignments in</span>
+                    <span class="mock__stat-value">142</span>
+                    <span class="mock__stat-delta is-up">▲ 12</span>
+                  </div>
+                  <div class="mock__stat">
+                    <span class="mock__stat-label">Needs attention</span>
+                    <span class="mock__stat-value">3</span>
+                    <span class="mock__stat-delta is-warn">students</span>
+                  </div>
+                </div>
+                <div class="mock__panel">
+                  <div class="mock__panel-head">
+                    <div class="mock__title-line mock__title-line--sm"></div>
+                    <div class="mock__pill"></div>
+                  </div>
+                  <div class="mock__chart">
+                    <div style="--h: 42%"></div>
+                    <div style="--h: 58%"></div>
+                    <div style="--h: 47%"></div>
+                    <div style="--h: 66%"></div>
+                    <div style="--h: 61%"></div>
+                    <div style="--h: 78%"></div>
+                    <div style="--h: 72%"></div>
+                    <div style="--h: 88%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mock__float mock__float--insight">
+              <span class="mock__float-icon">✦</span>
+              <div>
+                <strong>AI insight</strong>
+                <p>Unit 4 quiz scores dipped — 5 students may need a review session.</p>
+              </div>
+            </div>
+            <div class="mock__float mock__float--grade">
+              <strong>A−</strong>
+              <span>Essay graded · feedback sent</span>
+            </div>
           </div>
-          <ul class="feature-list">
-            <li data-reveal>
-              <span class="feature-list__index">01</span>
-              <div>
-                <h3>AI-powered insights</h3>
-                <p>Spot learning gaps early with patterns drawn from assignments, attendance, and grades.</p>
-              </div>
-            </li>
-            <li data-reveal>
-              <span class="feature-list__index">02</span>
-              <div>
-                <h3>Live analytics</h3>
-                <p>Track progress across courses with dashboards designed for teachers, not spreadsheets.</p>
-              </div>
-            </li>
-            <li data-reveal>
-              <span class="feature-list__index">03</span>
-              <div>
-                <h3>Faster feedback</h3>
-                <p>Grade, comment, and return work in one flow so students know where they stand.</p>
-              </div>
-            </li>
-            <li data-reveal>
-              <span class="feature-list__index">04</span>
-              <div>
-                <h3>Secure by default</h3>
-                <p>Role-aware access keeps student data in the right hands, across every school.</p>
-              </div>
-            </li>
-          </ul>
         </div>
       </section>
 
+      <!-- ======================== STATS ======================== -->
+      <section class="statband">
+        <div class="container statband__grid" data-reveal>
+          <div class="statband__item">
+            <strong>2 hrs</strong>
+            <span>saved per teacher, weekly</span>
+          </div>
+          <div class="statband__item">
+            <strong>3&times;</strong>
+            <span>earlier learning-gap detection</span>
+          </div>
+          <div class="statband__item">
+            <strong>94%</strong>
+            <span>of students check goals weekly</span>
+          </div>
+          <div class="statband__item">
+            <strong>1 place</strong>
+            <span>for grades, growth &amp; insight</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================== FEATURES ======================== -->
+      <section id="features" class="section--features">
+        <div class="features-track" data-features-track>
+          <div class="features-stage">
+            <div class="features-aura" aria-hidden="true"></div>
+            <div class="container features-stage__inner">
+              <div class="features-head">
+                <p class="kicker">Features</p>
+                <h2>Built for the full school day</h2>
+              </div>
+
+              <div class="features-panels">
+                <article class="feature-panel" data-feature-panel data-accent="purple">
+                  <div class="feature-panel__copy">
+                    <p class="feature-panel__count">01 / 04</p>
+                    <h3>AI-powered insights</h3>
+                    <p>Spot learning gaps early with patterns drawn from assignments, attendance, and grades — surfaced before they become report-card surprises.</p>
+                  </div>
+                  <div class="feature-panel__visual">
+                    <div class="feature-panel__tile">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" />
+                        <circle cx="12" cy="12" r="4" />
+                      </svg>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="feature-panel" data-feature-panel data-accent="orange">
+                  <div class="feature-panel__copy">
+                    <p class="feature-panel__count">02 / 04</p>
+                    <h3>Live analytics</h3>
+                    <p>Track progress across courses with dashboards designed for teachers, not spreadsheets — every class, cohort, and student at a glance.</p>
+                  </div>
+                  <div class="feature-panel__visual">
+                    <div class="feature-panel__tile">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 20V10M10 20V4M16 20v-8M22 20H2" />
+                      </svg>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="feature-panel" data-feature-panel data-accent="green">
+                  <div class="feature-panel__copy">
+                    <p class="feature-panel__count">03 / 04</p>
+                    <h3>Faster feedback</h3>
+                    <p>Grade, comment, and return work in one flow so students always know where they stand — and what to do next.</p>
+                  </div>
+                  <div class="feature-panel__visual">
+                    <div class="feature-panel__tile">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 1 1 16.1-3.8Z" />
+                        <path d="M8.5 11.5h7M8.5 8.5h4" />
+                      </svg>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="feature-panel" data-feature-panel data-accent="ink">
+                  <div class="feature-panel__copy">
+                    <p class="feature-panel__count">04 / 04</p>
+                    <h3>Secure by default</h3>
+                    <p>Role-aware access keeps student data in the right hands, across every school — privacy isn't a setting, it's the default.</p>
+                  </div>
+                  <div class="feature-panel__visual">
+                    <div class="feature-panel__tile">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10Z" />
+                        <path d="m9 11.5 2 2 4-4.5" />
+                      </svg>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <div class="features-progress" aria-hidden="true">
+                <span data-feature-seg><i></i></span>
+                <span data-feature-seg><i></i></span>
+                <span data-feature-seg><i></i></span>
+                <span data-feature-seg><i></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================== INSTITUTIONS ======================== -->
       <section id="institutions" class="section section--band">
         <div class="container split" data-reveal>
           <div class="split__copy">
@@ -147,15 +293,49 @@
             </ul>
             <a class="btn btn--primary" href="#demo">Request a demo</a>
           </div>
-          <div class="split__media">
-            <img
-              src="/assets/dashboard-institutions.png"
-              alt="Institution dashboard with student analytics"
-            />
+
+          <!-- CSS-built report card mockup -->
+          <div class="split__media" aria-hidden="true">
+            <div class="report">
+              <div class="report__head">
+                <div>
+                  <strong>Term report · Grade 10B</strong>
+                  <span>28 students · Fall term</span>
+                </div>
+                <span class="report__badge">Live</span>
+              </div>
+              <div class="report__rows">
+                <div class="report__row">
+                  <span class="report__subject">Mathematics</span>
+                  <span class="report__bar"><i style="--w: 86%"></i></span>
+                  <span class="report__score">86</span>
+                </div>
+                <div class="report__row">
+                  <span class="report__subject">English</span>
+                  <span class="report__bar"><i style="--w: 91%"></i></span>
+                  <span class="report__score">91</span>
+                </div>
+                <div class="report__row">
+                  <span class="report__subject">Sciences</span>
+                  <span class="report__bar"><i style="--w: 78%"></i></span>
+                  <span class="report__score">78</span>
+                </div>
+                <div class="report__row">
+                  <span class="report__subject">History</span>
+                  <span class="report__bar"><i style="--w: 83%"></i></span>
+                  <span class="report__score">83</span>
+                </div>
+              </div>
+              <div class="report__note">
+                <span class="report__note-icon">✦</span>
+                Sciences trending up 6 pts since midterm check-ins began.
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
+      <!-- ======================== STUDENTS ======================== -->
       <section id="students" class="section">
         <div class="container students" data-reveal>
           <div class="section__intro section__intro--left">
@@ -165,18 +345,22 @@
           </div>
           <div class="students__grid">
             <article>
+              <span class="students__num">01</span>
               <h3>Personalized pacing</h3>
               <p>Work that adapts to how you learn, not a one-size schedule.</p>
             </article>
             <article>
+              <span class="students__num">02</span>
               <h3>Goal tracking</h3>
               <p>Set targets and see them move as you complete assignments.</p>
             </article>
             <article>
+              <span class="students__num">03</span>
               <h3>Progress you can read</h3>
               <p>Simple insights instead of gradebook noise.</p>
             </article>
             <article>
+              <span class="students__num">04</span>
               <h3>Help when you need it</h3>
               <p>Ask questions and get guidance without waiting for office hours.</p>
             </article>
@@ -185,40 +369,52 @@
         </div>
       </section>
 
+      <!-- ======================== QUOTES ======================== -->
       <section class="section section--quiet">
         <div class="container quotes" data-reveal>
           <h2>Trusted in the classroom</h2>
           <div class="quotes__grid">
             <blockquote>
-              <p>“NUDLE helps us catch learning gaps early — before they show up on the report card.”</p>
+              <p>“Kleva helps us catch learning gaps early — before they show up on the report card.”</p>
               <footer>
-                <strong>Dr. Sarah Johnson</strong>
-                <span>Department Head</span>
+                <span class="quotes__avatar" aria-hidden="true">SJ</span>
+                <div>
+                  <strong>Dr. Sarah Johnson</strong>
+                  <span>Department Head</span>
+                </div>
               </footer>
             </blockquote>
             <blockquote>
               <p>“The analytics view became our default for understanding how programs are actually performing.”</p>
               <footer>
-                <strong>Michael Chen</strong>
-                <span>Dean of Students</span>
+                <span class="quotes__avatar" aria-hidden="true">MC</span>
+                <div>
+                  <strong>Michael Chen</strong>
+                  <span>Dean of Students</span>
+                </div>
               </footer>
             </blockquote>
             <blockquote>
               <p>“Having feedback and goals in one place changed how I study week to week.”</p>
               <footer>
-                <strong>Emily Rodriguez</strong>
-                <span>Undergraduate Student</span>
+                <span class="quotes__avatar" aria-hidden="true">ER</span>
+                <div>
+                  <strong>Emily Rodriguez</strong>
+                  <span>Undergraduate Student</span>
+                </div>
               </footer>
             </blockquote>
           </div>
         </div>
       </section>
 
-      <section id="demo" class="section section--band">
+      <!-- ======================== DEMO ======================== -->
+      <section id="demo" class="section section--panel">
+        <div class="panel-glow" aria-hidden="true"></div>
         <div class="container demo" data-reveal>
           <div class="demo__intro">
             <p class="kicker">Request a demo</p>
-            <h2>See NUDLE with your school in mind</h2>
+            <h2>See Kleva with your school in mind</h2>
             <p>
               Tell us a bit about your institution and we’ll follow up to schedule a walkthrough.
             </p>
@@ -277,8 +473,11 @@
     <footer class="footer">
       <div class="container footer__inner">
         <div class="footer__brand">
-          <img src="/assets/nudle-logo.png" alt="NUDLE" />
-          <p>AI-driven tools for teaching, assessment, and learning analytics.</p>
+          <span class="footer__logo">
+            <img class="brand-mark" src="/assets/kleva-mark.svg" alt="" />
+            <span class="brand-word">Kleva</span>
+          </span>
+          <p>Grades, growth, and insight — together, for your whole school.</p>
         </div>
         <div class="footer__cols">
           <div>
@@ -297,11 +496,12 @@
           </div>
         </div>
         <div class="footer__bottom">
-          <p>© <span data-year></span> NUDLE</p>
+          <p>© <span data-year></span> Kleva</p>
         </div>
       </div>
     </footer>
 
     <script src="/main.js" defer></script>
+    <script src="/assets/hero-bg.js" defer></script>
   </body>
 </html>
