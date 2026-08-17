@@ -34,7 +34,7 @@ aiRouter.post("/ai/assistant", requireAuth, async (req: AuthenticatedRequest, re
         messages: [
           {
             role: "system",
-            content: "You are Nudle, a helpful teaching assistant.",
+            content: "You are Kleva, a helpful teaching assistant.",
           },
           { role: "user", content: body.message },
         ],

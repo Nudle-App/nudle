@@ -5,7 +5,7 @@ import { Button } from "@nudle/ui/button";
 import { ScrollArea } from "@nudle/ui/scroll-area";
 import { Bot, Send, Sparkles } from "lucide-react";
 
-interface AskNudleDialogProps {
+interface AskKlevaDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -17,16 +17,21 @@ const examplePrompts = [
   "Show me engagement trends for this semester",
 ];
 
-export const AskNudleDialog = ({ open, onOpenChange }: AskNudleDialogProps) => {
+export const AskKlevaDialog = ({ open, onOpenChange }: AskKlevaDialogProps) => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([]);
 
   const handleSend = () => {
     if (!input.trim()) return;
-    
-    setMessages([...messages, 
+
+    setMessages([
+      ...messages,
       { role: "user", content: input },
-      { role: "assistant", content: "This is a demo response. In production, this would connect to an AI service to provide intelligent insights and suggestions." }
+      {
+        role: "assistant",
+        content:
+          "This is a demo response. In production, this would connect to an AI service to provide intelligent insights and suggestions.",
+      },
     ]);
     setInput("");
   };
@@ -41,7 +46,7 @@ export const AskNudleDialog = ({ open, onOpenChange }: AskNudleDialogProps) => {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Bot className="h-6 w-6 text-primary" />
-            Ask Nudle
+            Ask Kleva
           </DialogTitle>
           <DialogDescription>
             Get AI-powered insights and assistance for your teaching tasks

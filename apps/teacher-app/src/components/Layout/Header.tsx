@@ -7,14 +7,14 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { ProfileMenu } from "@/components/Layout/ProfileMenu";
 
 interface HeaderProps {
-  onAskNudle: () => void;
+  onAskKleva: () => void;
   onToggleSidebar: () => void;
   onToggleMobileSidebar: () => void;
   sidebarOpen: boolean;
 }
 
 export const Header = ({
-  onAskNudle,
+  onAskKleva,
   onToggleSidebar,
   onToggleMobileSidebar,
 }: HeaderProps) => {
@@ -69,9 +69,9 @@ export const Header = ({
 
           <ProfileMenu variant="avatar" />
 
-          <Button onClick={onAskNudle} className="rounded-full shadow-sm" size="default">
+          <Button onClick={onAskKleva} className="rounded-full shadow-sm" size="default">
             <Bot className="h-4 w-4 mr-2" />
-            <span className="hidden sm:inline">Ask Nudle</span>
+            <span className="hidden sm:inline">Ask Kleva</span>
           </Button>
         </div>
       </div>

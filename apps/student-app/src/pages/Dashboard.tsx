@@ -253,7 +253,7 @@ export default function Dashboard() {
               <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mx-auto mb-3">
                 <MessageSquare className="h-5 w-5" />
               </div>
-              <h3 className="font-semibold mb-2">Ask Nudle AI</h3>
+              <h3 className="font-semibold mb-2">Ask Kleva AI</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 Get help with assignments, study tips, and course insights.
               </p>

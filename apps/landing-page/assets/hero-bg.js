@@ -91,7 +91,10 @@
     particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
   }
 
+  let rafId = null;
+
   function animate() {
+    rafId = requestAnimationFrame(animate);
     ctx.clearRect(0, 0, width, height);
 
     for (let i = 0; i < particles.length; i++) {
@@ -128,15 +131,30 @@
         }
       }
     }
+  }
 
-    requestAnimationFrame(animate);
+  function start() {
+    if (rafId == null) rafId = requestAnimationFrame(animate);
+  }
+
+  function stop() {
+    if (rafId != null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
   }
 
   window.addEventListener("resize", init);
 
+  // Only animate while the hero is on screen
+  const visibility = new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) start();
+    else stop();
+  });
+
   // Wait a beat so the hero has laid out before sizing the canvas
   setTimeout(() => {
     init();
-    animate();
+    visibility.observe(canvas);
   }, 100);
 })();

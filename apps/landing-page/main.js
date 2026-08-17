@@ -28,11 +28,32 @@ mobile?.querySelectorAll("a").forEach((link) => {
   link.addEventListener("click", () => setMenu(false));
 });
 
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && mobile?.classList.contains("is-open")) {
+    setMenu(false);
+  }
+});
+
 const year = document.querySelector("[data-year]");
 if (year) year.textContent = String(new Date().getFullYear());
 
+// Scrollspy: highlight the nav link for the section currently in view
+const spyLinks = Array.from(document.querySelectorAll(".nav__links a[href^='#']"));
+const spySections = spyLinks
+  .map((link) => document.querySelector(link.getAttribute("href")))
+  .filter(Boolean);
+
 function syncNav() {
   nav?.classList.toggle("is-scrolled", window.scrollY > 8);
+
+  const threshold = window.innerHeight * 0.35;
+  let activeIndex = -1;
+  spySections.forEach((section, i) => {
+    if (section.getBoundingClientRect().top <= threshold) activeIndex = i;
+  });
+  spyLinks.forEach((link, i) => {
+    link.classList.toggle("is-active", i === activeIndex);
+  });
 }
 
 syncNav();
@@ -53,6 +74,45 @@ if ("IntersectionObserver" in window) {
   revealItems.forEach((el) => observer.observe(el));
 } else {
   revealItems.forEach((el) => el.classList.add("is-visible"));
+}
+
+// Count up the stat band numbers the first time they scroll into view
+const statValues = Array.from(document.querySelectorAll(".statband__item strong"));
+
+if (
+  statValues.length &&
+  "IntersectionObserver" in window &&
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+) {
+  const statObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        statObserver.unobserve(entry.target);
+
+        const original = entry.target.textContent || "";
+        const match = original.match(/^(\d+)([\s\S]*)$/);
+        if (!match) continue;
+
+        const target = Number(match[1]);
+        const suffix = match[2];
+        const duration = 1100;
+        const startTime = performance.now();
+
+        const tick = (now) => {
+          const t = Math.min(1, (now - startTime) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          entry.target.textContent = `${Math.round(target * eased)}${suffix}`;
+          if (t < 1) requestAnimationFrame(tick);
+          else entry.target.textContent = original;
+        };
+        requestAnimationFrame(tick);
+      }
+    },
+    { threshold: 0.6 },
+  );
+
+  statValues.forEach((el) => statObserver.observe(el));
 }
 
 // Pinned features scrollytelling: the stage sticks while the user scrolls

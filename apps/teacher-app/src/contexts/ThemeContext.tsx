@@ -18,7 +18,7 @@ type ThemeContextValue = {
   setTheme: (theme: ThemePreference) => void;
 };
 
-const STORAGE_KEY = "nudle-theme";
+const STORAGE_KEY = "kleva-theme";
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 function resolveTheme(theme: ThemePreference): "light" | "dark" {

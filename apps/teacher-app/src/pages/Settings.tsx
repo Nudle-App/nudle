@@ -45,7 +45,7 @@ const Settings = () => {
       <div className="surface-card p-6">
         <div className="mb-5">
           <h2 className="text-lg font-semibold tracking-tight">Profile Information</h2>
-          <p className="page-subtitle mt-0.5">Your account details from Nudle</p>
+          <p className="page-subtitle mt-0.5">Your account details from Kleva</p>
         </div>
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

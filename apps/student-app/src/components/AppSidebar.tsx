@@ -9,7 +9,6 @@ import {
   FileText,
   MessageSquare,
 } from "lucide-react";
-import stIgnatiusLogo from "@/assets/st-ignatius-logo.png";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar,
@@ -39,15 +38,12 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-sidebar-border bg-sidebar">
       <SidebarContent>
-        <div className="px-4 py-4 flex items-center gap-3">
-          <img src={stIgnatiusLogo} alt="St Ignatius College" className="h-10 w-auto" />
-          {open && (
-            <div>
-              <p className="text-sm font-semibold tracking-tight">Nudle</p>
-              <p className="text-xs text-muted-foreground">Student</p>
-            </div>
-          )}
-        </div>
+        {open && (
+          <div className="px-4 py-4">
+            <p className="text-sm font-semibold tracking-tight">Kleva</p>
+            <p className="text-xs text-muted-foreground">Student</p>
+          </div>
+        )}
 
         <SidebarMenu className="px-2 space-y-1">
           {mainItems.map((item) => (

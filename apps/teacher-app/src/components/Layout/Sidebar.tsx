@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
-import stIgnatiusLogo from "@/assets/st-ignatius-logo.png";
 import { Button } from "@nudle/ui/button";
 import { ProfileMenu } from "@/components/Layout/ProfileMenu";
 
@@ -46,12 +45,9 @@ export const Sidebar = ({ isOpen, mobileOpen, onMobileClose }: SidebarProps) => 
         )}
       >
         <div className="p-5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={stIgnatiusLogo} alt="St Ignatius College" className="h-10 w-auto" />
-            <div>
-              <p className="text-sm font-semibold tracking-tight">Nudle</p>
-              <p className="text-xs text-muted-foreground">Teacher</p>
-            </div>
+          <div>
+            <p className="text-sm font-semibold tracking-tight">Kleva</p>
+            <p className="text-xs text-muted-foreground">Teacher</p>
           </div>
           <Button variant="ghost" size="icon" onClick={onMobileClose} className="lg:hidden rounded-full">
             <X className="h-5 w-5" />

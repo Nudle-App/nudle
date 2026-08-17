@@ -1,6 +1,6 @@
-# Nudle monorepo
+# Kleva monorepo
 
-pnpm + Turborepo workspace for the Nudle student app, teacher app, landing page, and shared API.
+pnpm + Turborepo workspace for the Kleva student app, teacher app, landing page, and shared API.
 
 ## Structure
 

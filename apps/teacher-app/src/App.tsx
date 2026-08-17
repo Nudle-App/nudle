@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Sidebar } from "@/components/Layout/Sidebar";
 import { Header } from "@/components/Layout/Header";
 import { Footer } from "@/components/Layout/Footer";
-import { AskNudleDialog } from "@/components/AskNudle/AskNudleDialog";
+import { AskKlevaDialog } from "@/components/AskKleva/AskKlevaDialog";
 import Dashboard from "./pages/Dashboard";
 import Courses from "./pages/Courses";
 import Grading from "./pages/Grading";
@@ -38,7 +38,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AppShell() {
-  const [askNudleOpen, setAskNudleOpen] = useState(false);
+  const [askKlevaOpen, setAskKlevaOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -55,7 +55,7 @@ function AppShell() {
         }`}
       >
         <Header
-          onAskNudle={() => setAskNudleOpen(true)}
+          onAskKleva={() => setAskKlevaOpen(true)}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           onToggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
           sidebarOpen={sidebarOpen}
@@ -77,7 +77,7 @@ function AppShell() {
         </main>
         <Footer />
       </div>
-      <AskNudleDialog open={askNudleOpen} onOpenChange={setAskNudleOpen} />
+      <AskKlevaDialog open={askKlevaOpen} onOpenChange={setAskKlevaOpen} />
     </div>
   );
 }
