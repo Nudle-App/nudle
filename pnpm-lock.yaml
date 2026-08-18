@@ -23,6 +23,21 @@ importers:
 
   apps/server:
     dependencies:
+      '@nudle/typescript-config':
+        specifier: workspace:*
+        version: link:../../packages/typescript-config
+      '@types/cors':
+        specifier: ^2.8.17
+        version: 2.8.19
+      '@types/express':
+        specifier: ^4.17.21
+        version: 4.17.25
+      '@types/node':
+        specifier: ^22.16.5
+        version: 22.20.1
+      '@types/pg':
+        specifier: ^8.21.0
+        version: 8.21.0
       better-auth:
         specifier: ^1.6.26
         version: 1.6.26(pg@8.23.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -44,31 +59,15 @@ importers:
       pg:
         specifier: ^8.23.0
         version: 8.23.0
-      zod:
-        specifier: ^4.4.3
-        version: 4.4.3
-    devDependencies:
-      '@nudle/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      '@types/cors':
-        specifier: ^2.8.17
-        version: 2.8.19
-      '@types/express':
-        specifier: ^4.17.21
-        version: 4.17.25
-      '@types/node':
-        specifier: ^22.16.5
-        version: 22.20.1
-      '@types/pg':
-        specifier: ^8.21.0
-        version: 8.21.0
       tsx:
         specifier: ^4.23.12
         version: 4.23.12
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
   apps/student-app:
     dependencies:
