@@ -10,6 +10,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
+import klevaMark from "@/assets/kleva-mark.svg";
 import {
   Sidebar,
   SidebarContent,
@@ -38,12 +39,15 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-sidebar-border bg-sidebar">
       <SidebarContent>
-        {open && (
-          <div className="px-4 py-4">
-            <p className="text-sm font-semibold tracking-tight">Kleva</p>
-            <p className="text-xs text-muted-foreground">Student</p>
-          </div>
-        )}
+        <div className={open ? "px-4 py-4 flex items-center gap-2.5" : "px-2 py-4 flex justify-center"}>
+          <img src={klevaMark} alt="Kleva" className="h-8 w-8 shrink-0" />
+          {open && (
+            <div>
+              <p className="text-sm font-semibold tracking-tight">Kleva</p>
+              <p className="text-xs text-muted-foreground">Student</p>
+            </div>
+          )}
+        </div>
 
         <SidebarMenu className="px-2 space-y-1">
           {mainItems.map((item) => (

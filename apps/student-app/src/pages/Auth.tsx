@@ -7,7 +7,7 @@ import { Label } from "@nudle/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@nudle/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@nudle/ui/tabs";
 import { useToast } from "@nudle/ui/use-toast";
-import stIgnatiusLogo from "@/assets/st-ignatius-logo.png";
+import klevaMark from "@/assets/kleva-mark.svg";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -79,13 +79,10 @@ export default function Auth() {
       <Card className="w-full max-w-md surface-card border-border/80 shadow-elevated">
         <CardHeader className="space-y-4 text-center pb-2">
           <div className="flex justify-center">
-            <img
-              src={stIgnatiusLogo}
-              alt="St Ignatius College"
-              className="h-16 w-auto"
-            />
+            <img src={klevaMark} alt="Kleva" className="h-16 w-16" />
           </div>
           <div>
+            <p className="text-sm font-medium tracking-wide text-muted-foreground">Kleva Student</p>
             <CardTitle className="text-2xl font-semibold tracking-tight">
               Student Portal
             </CardTitle>

@@ -12,6 +12,7 @@ import { NavLink } from "@/components/NavLink";
 import { cn } from "@/lib/utils";
 import { Button } from "@nudle/ui/button";
 import { ProfileMenu } from "@/components/Layout/ProfileMenu";
+import klevaMark from "@/assets/kleva-mark.svg";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -45,9 +46,12 @@ export const Sidebar = ({ isOpen, mobileOpen, onMobileClose }: SidebarProps) => 
         )}
       >
         <div className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-sm font-semibold tracking-tight">Kleva</p>
-            <p className="text-xs text-muted-foreground">Teacher</p>
+          <div className="flex items-center gap-2.5">
+            <img src={klevaMark} alt="Kleva" className="h-8 w-8 shrink-0" />
+            <div>
+              <p className="text-sm font-semibold tracking-tight">Kleva</p>
+              <p className="text-xs text-muted-foreground">Teacher</p>
+            </div>
           </div>
           <Button variant="ghost" size="icon" onClick={onMobileClose} className="lg:hidden rounded-full">
             <X className="h-5 w-5" />

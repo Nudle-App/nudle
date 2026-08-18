@@ -6,6 +6,7 @@ import { Button } from "@nudle/ui/button";
 import { Input } from "@nudle/ui/input";
 import { Label } from "@nudle/ui/label";
 import { useToast } from "@nudle/ui/use-toast";
+import klevaMark from "@/assets/kleva-mark.svg";
 
 export default function Auth() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -45,6 +46,7 @@ export default function Auth() {
     <div className="min-h-screen flex items-center justify-center p-6 bg-background">
       <div className="w-full max-w-md surface-card p-8">
         <div className="mb-6 text-center">
+          <img src={klevaMark} alt="Kleva" className="h-16 w-16 mx-auto mb-3" />
           <p className="text-sm font-medium tracking-wide text-muted-foreground mb-2">Kleva Teacher</p>
           <h1 className="page-title text-2xl">
             {mode === "signin" ? "Teacher sign in" : "Create teacher account"}
