@@ -35,8 +35,6 @@ html {
   scroll-behavior: smooth;
   /* Keep anchored sections from landing underneath the fixed nav */
   scroll-padding-top: calc(var(--nav-h) + 0.5rem);
-  max-width: 100%;
-  overflow-x: hidden;
 }
 
 body {
@@ -46,8 +44,6 @@ body {
   background: var(--bg);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
-  max-width: 100%;
-  overflow-x: hidden;
   overscroll-behavior-x: none;
 }
 
@@ -860,7 +856,6 @@ main {
    opacity/position from scroll progress. */
 .section--features {
   position: relative;
-  overflow-x: hidden;
 }
 
 .features-track {
@@ -1076,6 +1071,15 @@ main {
   transform-origin: left;
 }
 
+/* Clip horizontal bleed on small screens without breaking desktop sticky */
+@media (max-width: 820px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
 /* Fallback: small screens & reduced motion get a simple stacked layout */
 @media (max-width: 820px), (prefers-reduced-motion: reduce) {
   .features-track {
@@ -1164,13 +1168,12 @@ main {
 /* --- CSS report card mockup --- */
 .split__media {
   position: relative;
-  overflow-x: hidden;
 }
 
 .split__media::before {
   content: "";
   position: absolute;
-  inset: 12% 0 -8% 10%;
+  inset: 12% 0 0 10%;
   background: radial-gradient(ellipse at center, hsl(247 76% 70% / 0.16), transparent 70%);
   pointer-events: none;
 }

@@ -90,7 +90,7 @@ const Grading = () => {
         </div>
       </div>
 
-      <div className="surface-card p-6">
+      <div className="surface-card p-6 overflow-hidden">
         <div className="mb-5">
           <h2 className="text-lg font-semibold tracking-tight">Student Submissions</h2>
           <p className="page-subtitle mt-0.5">Review and grade assignments</p>
