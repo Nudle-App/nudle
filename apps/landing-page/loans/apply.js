@@ -18,7 +18,7 @@ const SCHOOLS = [
 ];
 
 const EMPLOYERS = [
-  "CBZ Holdings",
+  "Aether Holdings",
   "Econet Wireless Zimbabwe",
   "Delta Corporation",
   "Old Mutual Zimbabwe",
@@ -28,8 +28,8 @@ const EMPLOYERS = [
   "ZESA Holdings",
   "Government of Zimbabwe (Civil Service)",
   "NetOne",
-  "Steward Bank",
-  "First Capital Bank",
+  "Lumina Bank",
+  "Ridgeway Bank",
   "Nyaradzo Group",
   "Innscor Africa",
   "Simbisa Brands",
@@ -467,7 +467,7 @@ function fillCurrentStep() {
     set("email", "tapiwa.kundishora@example.com");
     set("countryOfBirth", "Zimbabwe");
     set("phone", "+263 771 234 567");
-    set("bankName", "CBZ Bank");
+    set("bankName", "Lumina Bank");
     set("branchName", "Borrowdale");
     set("branchCode", "6101");
     set("accountNumber", "1002458891");
