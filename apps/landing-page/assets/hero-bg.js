@@ -8,10 +8,9 @@
   const ctx = canvas.getContext("2d");
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-  const PARTICLE_COUNT = 60;
-  const CONNECTION_DISTANCE = 150;
-  const MOUSE_DISTANCE = 200;
   const MAX_SPEED = 1.4;
+  const AREA_PER_PARTICLE = 5500;
+  const config = { count: 60, connection: 150, mouse: 200 };
 
   // Brand purple, drawn at varying alpha
   const HUE = "247 76% 45%";
@@ -55,8 +54,8 @@
         const dy = mouse.y - this.y;
         const distance = Math.hypot(dx, dy);
 
-        if (distance > 0 && distance < MOUSE_DISTANCE) {
-          const force = (MOUSE_DISTANCE - distance) / MOUSE_DISTANCE;
+        if (distance > 0 && distance < config.mouse) {
+          const force = (config.mouse - distance) / config.mouse;
           this.vx += (dx / distance) * force * 0.6;
           this.vy += (dy / distance) * force * 0.6;
         }
@@ -88,7 +87,11 @@
     canvas.height = height * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    particles = Array.from({ length: PARTICLE_COUNT }, () => new Particle());
+    const area = Math.max(1, width * height);
+    config.count = Math.round(Math.min(140, Math.max(50, area / AREA_PER_PARTICLE)));
+    config.connection = Math.max(130, Math.min(260, Math.sqrt(area) * 0.22));
+    config.mouse = config.connection * 1.3;
+    particles = Array.from({ length: config.count }, () => new Particle());
   }
 
   let rafId = null;
@@ -106,8 +109,8 @@
         const q = particles[j];
         const distance = Math.hypot(p.x - q.x, p.y - q.y);
 
-        if (distance < CONNECTION_DISTANCE) {
-          const alpha = (1 - distance / CONNECTION_DISTANCE) * 0.35;
+        if (distance < config.connection) {
+          const alpha = (1 - distance / config.connection) * 0.35;
           ctx.beginPath();
           ctx.strokeStyle = `hsl(${HUE} / ${alpha})`;
           ctx.lineWidth = 1;
@@ -120,8 +123,8 @@
       if (mouse.x != null) {
         const distance = Math.hypot(p.x - mouse.x, p.y - mouse.y);
 
-        if (distance < MOUSE_DISTANCE) {
-          const alpha = (1 - distance / MOUSE_DISTANCE) * 0.45;
+        if (distance < config.mouse) {
+          const alpha = (1 - distance / config.mouse) * 0.45;
           ctx.beginPath();
           ctx.strokeStyle = `hsl(${HUE} / ${alpha})`;
           ctx.lineWidth = 1;
