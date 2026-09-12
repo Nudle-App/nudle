@@ -17,7 +17,10 @@ const PORTALS = isLocal
 
 document.querySelectorAll("[data-portal]").forEach((link) => {
   const dest = PORTALS[link.getAttribute("data-portal")];
-  if (dest) link.setAttribute("href", dest);
+  if (!dest) return;
+  link.setAttribute("href", dest);
+  link.setAttribute("target", "_blank");
+  link.setAttribute("rel", "noopener noreferrer");
 });
 
 function setMenu(open) {
