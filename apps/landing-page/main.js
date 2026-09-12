@@ -25,6 +25,7 @@ document.querySelectorAll("[data-portal]").forEach((link) => {
 
 function setMenu(open) {
   mobile?.classList.toggle("is-open", open);
+  nav?.classList.toggle("is-open", open);
   toggle?.setAttribute("aria-expanded", String(open));
   if (iconOpen && iconClose) {
     iconOpen.hidden = open;

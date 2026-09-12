@@ -141,7 +141,6 @@ textarea:focus-visible {
   position: fixed;
   inset: 0 0 auto;
   z-index: 50;
-  height: var(--nav-h);
   background: color-mix(in srgb, var(--bg) 78%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -149,13 +148,14 @@ textarea:focus-visible {
   transition: border-color 0.25s, background 0.25s;
 }
 
-.nav.is-scrolled {
+.nav.is-scrolled,
+.nav.is-open {
   border-bottom-color: var(--border);
   background: color-mix(in srgb, var(--bg) 92%, transparent);
 }
 
 .nav__inner {
-  height: 100%;
+  height: var(--nav-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -224,21 +224,33 @@ textarea:focus-visible {
 }
 
 .nav__toggle {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
   border: 0;
   background: transparent;
-  padding: 0.45rem;
+  padding: 0;
   cursor: pointer;
   color: var(--fg);
 }
 
+.nav__toggle svg {
+  display: block;
+}
+
+.nav__toggle svg[hidden] {
+  display: none !important;
+}
+
 .nav__mobile {
   display: none;
+  width: 100%;
   border-top: 1px solid var(--border);
   background: var(--bg-elevated);
-  padding: 0.75rem 0 1.25rem;
+  padding: 0.35rem 0 1.15rem;
   box-shadow: var(--shadow-md);
 }
 
@@ -246,18 +258,40 @@ textarea:focus-visible {
   display: block;
 }
 
+.nav__mobile-inner {
+  display: flex;
+  flex-direction: column;
+}
+
 .nav__mobile a {
-  display: block;
-  padding: 0.7rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 0;
   font-weight: 600;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+.nav__mobile a[data-portal]::after {
+  content: "↗";
+  flex-shrink: 0;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
 .nav__mobile-actions {
   display: grid;
   gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--border);
+  margin-top: 0.35rem;
+  padding-top: 0.85rem;
+}
+
+.nav__mobile-actions a {
+  border-bottom: 0;
+  justify-content: center;
+  padding: 0.65rem 1.3rem;
 }
 
 @media (min-width: 1024px) {
