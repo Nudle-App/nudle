@@ -28,7 +28,7 @@ export function emailLogoAttachment() {
 
 export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult> {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.MAIL_FROM || "Kleva <beth.t@example.com>";
+  const from = process.env.RESEND_MAIL_FROM || "Kleva <hello@joinkleva.app>";
 
   if (!apiKey) {
     console.log(
