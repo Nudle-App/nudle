@@ -16,7 +16,7 @@ profilesRouter.get("/profiles", requireAuth, async (req: AuthenticatedRequest, r
 
     let query = db("user").select("id", "email", "name", "image").whereNot("id", req.user!.id);
 
-    if (role === "student" || role === "teacher" || role === "admin") {
+    if (role === "student" || role === "teacher" || role === "admin" || role === "parent") {
       const ids = await db("user_roles").where({ role }).pluck("user_id");
       const filtered = ids.filter((id: string) => id !== req.user!.id);
       if (filtered.length === 0) {

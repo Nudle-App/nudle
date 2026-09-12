@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useMe } from "@/hooks/use-me";
 import { api } from "@/lib/api";
 import { Button } from "@nudle/ui/button";
 import { Avatar, AvatarFallback } from "@nudle/ui/avatar";
 import { LogOut, User as UserIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "@nudle/ui/use-toast";
 import { Badge } from "@nudle/ui/badge";
 
@@ -16,6 +17,7 @@ interface Profile {
 
 export default function Account() {
   const { user, signOut } = useAuth();
+  const { isParent, children } = useMe();
   const [profile, setProfile] = useState<Profile | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -44,7 +46,7 @@ export default function Account() {
     navigate("/auth");
   };
 
-  const displayName = profile?.full_name || user?.name || "Student";
+  const displayName = profile?.full_name || user?.name || (isParent ? "Parent" : "Student");
   const displayEmail = profile?.email || user?.email || "N/A";
 
   const getInitials = (name: string) => {
@@ -77,7 +79,7 @@ export default function Account() {
         <div className="flex items-center gap-4 mb-8">
           <Avatar className="h-20 w-20 border border-border/80 shadow-sm">
             <AvatarFallback className="text-2xl font-semibold bg-muted">
-              {displayName !== "Student" ? (
+              {displayName !== "Student" && displayName !== "Parent" ? (
                 getInitials(displayName)
               ) : (
                 <UserIcon className="h-8 w-8" />
@@ -88,7 +90,7 @@ export default function Account() {
             <h2 className="text-2xl font-semibold tracking-tight">{displayName}</h2>
             <div className="flex items-center gap-2 mt-2">
               <Badge variant="secondary" className="rounded-full">
-                Student
+                {isParent ? "Parent" : "Student"}
               </Badge>
             </div>
           </div>
@@ -105,6 +107,41 @@ export default function Account() {
           </div>
         </div>
       </div>
+
+      {isParent && (
+        <div className="surface-card p-6">
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div>
+              <h2 className="text-lg font-semibold">Family</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Students you can view after they accept your invitation.
+              </p>
+            </div>
+            <Button asChild variant="outline" className="rounded-full">
+              <Link to="/family">Manage</Link>
+            </Button>
+          </div>
+          {children.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No students linked yet.</p>
+          ) : (
+            <ul className="space-y-2">
+              {children.map((child) => (
+                <li
+                  key={child.id}
+                  className="flex items-center justify-between rounded-xl border border-border/80 px-4 py-3"
+                >
+                  <span>
+                    <span className="block text-sm font-medium">{child.name}</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {child.email} · {child.relationship}
+                    </span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }

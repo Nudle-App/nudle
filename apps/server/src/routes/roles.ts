@@ -2,31 +2,29 @@ import { Router } from "express";
 import { z } from "zod";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth.js";
 import { db } from "../lib/db.js";
+import { assignAccountRole } from "../lib/access.js";
 
 export const rolesRouter = Router();
 
 const assignRoleSchema = z.object({
-  role: z.enum(["student", "teacher"]),
+  role: z.enum(["student", "teacher", "parent"]),
 });
 
 rolesRouter.post("/roles", requireAuth, async (req: AuthenticatedRequest, res) => {
   try {
     const body = assignRoleSchema.parse(req.body);
-
+    const userId = req.user!.id;
     const existing = await db("user_roles")
-      .where({ user_id: req.user!.id, role: body.role })
+      .where({ user_id: userId, role: body.role })
       .first();
 
-    if (existing) {
-      res.status(200).json(existing);
-      return;
-    }
+    await assignAccountRole(userId, body.role);
 
-    const [row] = await db("user_roles")
-      .insert({ user_id: req.user!.id, role: body.role })
-      .returning("*");
+    const row = await db("user_roles")
+      .where({ user_id: userId, role: body.role })
+      .first();
 
-    res.status(201).json(row);
+    res.status(existing ? 200 : 201).json(row);
   } catch (err) {
     if (err instanceof z.ZodError) {
       res.status(400).json({ error: err.flatten() });

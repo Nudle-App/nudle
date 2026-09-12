@@ -11,6 +11,15 @@ const API_BASE = isLocal
   ? "http://localhost:3001"
   : "https://server-l3dm.onrender.com";
 
+const PORTALS = isLocal
+  ? { student: "http://localhost:5173", teacher: "http://localhost:5174" }
+  : { student: "https://student.joinkleva.app", teacher: "https://teacher.joinkleva.app" };
+
+document.querySelectorAll("[data-portal]").forEach((link) => {
+  const dest = PORTALS[link.getAttribute("data-portal")];
+  if (dest) link.setAttribute("href", dest);
+});
+
 function setMenu(open) {
   mobile?.classList.toggle("is-open", open);
   toggle?.setAttribute("aria-expanded", String(open));

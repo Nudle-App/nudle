@@ -8,17 +8,30 @@ import {
   GraduationCap,
   FileText,
   MessageSquare,
+  Wallet,
+  Store,
+  CreditCard,
+  Zap,
+  FilePlus,
+  FolderOpen,
+  Users,
+  PanelLeft,
+  PanelLeftClose,
+  X,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import klevaMark from "@/assets/kleva-mark.svg";
+import { AccountSwitcher } from "@/components/AccountSwitcher";
 import {
   Sidebar,
   SidebarContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@nudle/ui/sidebar";
+import { useFamily } from "@/contexts/FamilyContext";
+import { cn } from "@/lib/utils";
 
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -31,61 +44,120 @@ const mainItems = [
   { title: "AI Insights", url: "/insights", icon: TrendingUp },
 ];
 
-const secondaryItems = [{ title: "Notices", url: "/notices", icon: Bell }];
+const financeItems = [
+  { title: "Finance Home", url: "/finance/home", icon: Wallet },
+  { title: "Marketplace", url: "/finance/marketplace", icon: Store },
+  { title: "Pay fees", url: "/finance/pay", icon: CreditCard },
+  { title: "Utilities", url: "/finance/utilities", icon: Zap },
+  { title: "Apply", url: "/finance/apply", icon: FilePlus },
+  { title: "My Applications", url: "/finance/applications", icon: FolderOpen },
+];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, isMobile } = useSidebar();
+  const { isParent } = useFamily();
+  const showLabels = open || isMobile;
+
+  const secondaryItems = isParent
+    ? [
+        { title: "Family", url: "/family", icon: Users },
+        { title: "Notices", url: "/notices", icon: Bell },
+      ]
+    : [{ title: "Notices", url: "/notices", icon: Bell }];
 
   return (
-    <Sidebar className="border-r border-sidebar-border bg-sidebar">
+    <Sidebar collapsible="icon" className="border-r border-sidebar-border bg-sidebar">
       <SidebarContent>
-        <div className={open ? "px-4 py-4 flex items-center gap-2.5" : "px-2 py-4 flex justify-center"}>
-          <img src={klevaMark} alt="Kleva" className="h-8 w-8 shrink-0" />
-          {open && (
-            <div>
-              <p className="text-sm font-semibold tracking-tight">Kleva</p>
-              <p className="text-xs text-muted-foreground">Student</p>
-            </div>
+        <SidebarHeader
+          className={cn(
+            "flex h-16 shrink-0 flex-row items-center p-0",
+            showLabels ? "px-2" : "px-1",
           )}
-        </div>
+        >
+          <AccountSwitcher />
+        </SidebarHeader>
 
-        <SidebarMenu className="px-2 space-y-1">
+        <SidebarMenu className={cn("space-y-1", showLabels ? "px-2" : "items-center px-0")}>
           {mainItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <NavLink
-                  to={item.url}
-                  end={item.url === "/"}
-                  className="flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-colors hover:bg-sidebar-accent"
-                  activeClassName="bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground font-semibold shadow-sm"
-                >
-                  <item.icon className="h-4 w-4" />
-                  {open && <span className="text-sm">{item.title}</span>}
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <SidebarItem key={item.title} item={item} showLabels={showLabels} end={item.url === "/"} />
           ))}
         </SidebarMenu>
 
+        {isParent && (
+          <>
+            {showLabels ? (
+              <p className="px-5 pt-4 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                Finance
+              </p>
+            ) : (
+              <div className="mx-2 my-2 border-t border-sidebar-border" />
+            )}
+            <SidebarMenu className={cn("space-y-1", showLabels ? "px-2" : "items-center px-0")}>
+              {financeItems.map((item) => (
+                <SidebarItem key={item.title} item={item} showLabels={showLabels} />
+              ))}
+            </SidebarMenu>
+          </>
+        )}
+
         <div className="mt-auto border-t border-sidebar-border pt-2">
-          <SidebarMenu className="px-2 space-y-1 pb-3">
+          <SidebarMenu className={cn("space-y-1 pb-3", showLabels ? "px-2" : "items-center px-0")}>
             {secondaryItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <NavLink
-                    to={item.url}
-                    className="flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-colors hover:bg-sidebar-accent"
-                    activeClassName="bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground font-semibold shadow-sm"
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {open && <span className="text-sm">{item.title}</span>}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <SidebarItem key={item.title} item={item} showLabels={showLabels} />
             ))}
+            <SidebarCollapseItem showLabels={showLabels} />
           </SidebarMenu>
         </div>
       </SidebarContent>
     </Sidebar>
+  );
+}
+
+function SidebarCollapseItem({ showLabels }: { showLabels: boolean }) {
+  const { open, isMobile, toggleSidebar } = useSidebar();
+  const Icon = isMobile ? X : open ? PanelLeftClose : PanelLeft;
+  const label = isMobile ? "Close" : open ? "Collapse" : "Expand";
+
+  return (
+    <SidebarMenuItem className={showLabels ? undefined : "flex justify-center"}>
+      <SidebarMenuButton
+        tooltip={label}
+        onClick={toggleSidebar}
+        aria-label={label}
+        className={cn("rounded-full", showLabels ? "px-3.5 py-2.5" : "!size-8 justify-center p-2 mx-auto")}
+      >
+        <Icon className="h-4 w-4 shrink-0" />
+        {showLabels && <span className="text-sm">{label}</span>}
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+function SidebarItem({
+  item,
+  showLabels,
+  end,
+}: {
+  item: { title: string; url: string; icon: typeof LayoutDashboard };
+  showLabels: boolean;
+  end?: boolean;
+}) {
+  return (
+    <SidebarMenuItem className={showLabels ? undefined : "flex justify-center"}>
+      <SidebarMenuButton asChild tooltip={item.title}>
+        <NavLink
+          to={item.url}
+          end={end}
+          className={cn(
+            "flex items-center rounded-full transition-colors hover:bg-sidebar-accent",
+            showLabels ? "gap-3 px-3.5 py-2.5" : "!size-8 justify-center p-2 mx-auto",
+          )}
+          activeClassName="bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground font-semibold shadow-sm"
+        >
+          <item.icon className="h-4 w-4 shrink-0" />
+          {showLabels && <span className="text-sm">{item.title}</span>}
+        </NavLink>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 }

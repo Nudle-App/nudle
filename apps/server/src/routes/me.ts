@@ -2,7 +2,8 @@ import { Router } from "express";
 import { z } from "zod";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth.js";
 import { db } from "../lib/db.js";
-import { asProfile } from "../lib/access.js";
+import { asProfile, getParentChildren } from "../lib/access.js";
+import { schoolById } from "../lib/schools.js";
 
 export const meRouter = Router();
 
@@ -27,7 +28,21 @@ meRouter.get("/me", requireAuth, async (req: AuthenticatedRequest, res) => {
 
     const row = await db("user")
       .where({ id: req.user!.id })
-      .first("id", "email", "name", "image", "preferences");
+      .first("id", "email", "name", "image", "preferences", "school_id");
+
+    const isParent = roles.includes("parent");
+    const children = isParent ? await getParentChildren(req.user!.id) : [];
+
+    let parentProfile: { phone: string | null; nationalId: string | null } | null = null;
+    if (isParent) {
+      const parentRow = await db("parent_profiles")
+        .where({ user_id: req.user!.id })
+        .first("phone", "national_id");
+      parentProfile = {
+        phone: parentRow?.phone ?? null,
+        nationalId: parentRow?.national_id ?? null,
+      };
+    }
 
     res.json({
       id: req.user!.id,
@@ -42,6 +57,9 @@ meRouter.get("/me", requireAuth, async (req: AuthenticatedRequest, res) => {
         : asProfile(req.user!),
       roles,
       preferences: normalizePreferences(row?.preferences),
+      children,
+      parentProfile,
+      school: schoolById(row?.school_id),
     });
   } catch (err) {
     res.status(500).json({

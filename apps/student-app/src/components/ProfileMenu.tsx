@@ -20,8 +20,7 @@ import {
 } from "@nudle/ui/alert-dialog";
 import { useToast } from "@nudle/ui/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { useMe } from "@/hooks/use-me";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -34,16 +33,7 @@ export function ProfileMenu({ className }: ProfileMenuProps) {
   const { toast } = useToast();
   const { user, signOut } = useAuth();
   const [signOutOpen, setSignOutOpen] = useState(false);
-
-  const { data: me } = useQuery({
-    queryKey: ["me"],
-    queryFn: () =>
-      api.get<{
-        profile: { full_name: string; email: string } | null;
-        email?: string;
-      }>("/api/me"),
-    enabled: Boolean(user),
-  });
+  const { data: me, isParent } = useMe();
 
   const name = me?.profile?.full_name || user?.name || "Student";
   const email = me?.profile?.email || user?.email || "";
@@ -72,7 +62,8 @@ export function ProfileMenu({ className }: ProfileMenuProps) {
             <div className="hidden sm:block text-right pl-1 min-w-0">
               <p className="text-sm font-semibold leading-none truncate max-w-[140px]">{name}</p>
               <p className="text-[11px] text-muted-foreground mt-1 truncate max-w-[140px]">
-                {email}
+                {isParent ? "Parent" : "Student"}
+                {email ? ` · ${email}` : ""}
               </p>
             </div>
             <div className="h-8 w-8 shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">
@@ -84,7 +75,10 @@ export function ProfileMenu({ className }: ProfileMenuProps) {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col gap-1">
               <p className="text-sm font-semibold leading-none">{name}</p>
-              <p className="text-xs text-muted-foreground truncate">{email}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {isParent ? "Parent" : "Student"}
+                {email ? ` · ${email}` : ""}
+              </p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

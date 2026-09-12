@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
-import { db } from "./db.js";
+import { assignAccountRole } from "./access.js";
+import { getSignupRole } from "./signup-role.js";
 
 const connectionString = process.env.DATABASE_URL;
 const needsSsl =
@@ -86,14 +87,7 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
-          // Default role; apps can also POST /api/roles after signup.
-          const existing = await db("user_roles").where({ user_id: user.id }).first();
-          if (!existing) {
-            await db("user_roles").insert({
-              user_id: user.id,
-              role: "student",
-            });
-          }
+          await assignAccountRole(user.id, getSignupRole());
         },
       },
     },

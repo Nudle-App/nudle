@@ -1,38 +1,46 @@
-import { SidebarProvider, SidebarTrigger } from "@nudle/ui/sidebar";
+import { SidebarProvider, useSidebar } from "@nudle/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Menu, Search, Bell } from "lucide-react";
 import { Input } from "@nudle/ui/input";
 import { Button } from "@nudle/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ProfileMenu } from "@/components/ProfileMenu";
+import { useFamily } from "@/contexts/FamilyContext";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background">
-        <AppSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-16 sticky top-0 z-10 bg-background/80 backdrop-blur-md">
-            <div className="flex items-center h-full px-4 md:px-8 gap-4">
-              <SidebarTrigger className="rounded-full">
-                <Menu className="h-5 w-5 text-foreground" />
-              </SidebarTrigger>
+  const { isParent } = useFamily();
 
-              <div className="flex-1 max-w-xl">
+  return (
+    <SidebarProvider
+      className="h-svh overflow-hidden"
+      style={{ "--sidebar-width-icon": "4rem" } as React.CSSProperties}
+    >
+      <div className="flex h-full min-h-0 w-full bg-background">
+        <AppSidebar />
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <header className="relative z-20 h-16 shrink-0 border-b border-border bg-background">
+            <div className="mx-auto flex h-full w-full max-w-7xl items-center gap-4 px-5 md:px-8">
+              <MobileSidebarTrigger />
+
+              <div className="min-w-0 flex-1 max-w-xl">
                 <div className="relative">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search courses, assignments, or resources…"
+                    placeholder={
+                      isParent
+                        ? "Search courses, fees, or applications…"
+                        : "Search courses, assignments, or resources…"
+                    }
                     className="pl-10 h-10 rounded-full bg-card border-border/70 shadow-sm"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="ml-auto flex shrink-0 items-center gap-2">
                 <Button variant="outline" size="icon" className="rounded-full">
                   <Bell className="h-4 w-4" />
                 </Button>
@@ -41,11 +49,28 @@ export function Layout({ children }: LayoutProps) {
               </div>
             </div>
           </header>
-          <main className="flex-1 overflow-auto">
+          <main className="min-h-0 flex-1 overflow-y-auto">
             <div className="max-w-7xl mx-auto w-full p-5 md:p-8 space-y-6">{children}</div>
           </main>
         </div>
       </div>
     </SidebarProvider>
+  );
+}
+
+function MobileSidebarTrigger() {
+  const { toggleSidebar } = useSidebar();
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className="rounded-full md:hidden"
+      onClick={toggleSidebar}
+      aria-label="Open sidebar"
+    >
+      <Menu className="h-5 w-5 text-foreground" />
+    </Button>
   );
 }

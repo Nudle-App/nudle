@@ -4,7 +4,9 @@ import { TooltipProvider } from "@nudle/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
+import { ParentOnly } from "./components/ParentOnly";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { FamilyProvider } from "./contexts/FamilyContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Dashboard from "./pages/Dashboard";
 import Assignments from "./pages/Assignments";
@@ -17,8 +19,19 @@ import Calendar from "./pages/Calendar";
 import Courses from "./pages/Courses";
 import ReportCard from "./pages/ReportCard";
 import Inbox from "./pages/Inbox";
+import Family from "./pages/Family";
+import Invite from "./pages/Invite";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import FinanceHome from "./pages/finance/FinanceHome";
+import FinanceMarketplace from "./pages/finance/FinanceMarketplace";
+import FinancePay from "./pages/finance/FinancePay";
+import FinanceUtilities from "./pages/finance/FinanceUtilities";
+import FinanceApply from "./pages/finance/FinanceApply";
+import FinanceApplications from "./pages/finance/FinanceApplications";
+import FinanceReceipt from "./pages/finance/FinanceReceipt";
+import FinanceSchool from "./pages/finance/FinanceSchool";
+import FinanceSupplier from "./pages/finance/FinanceSupplier";
 
 const queryClient = new QueryClient();
 
@@ -36,131 +49,62 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function AppPage({ children }: { children: React.ReactNode }) {
+  return (
+    <ProtectedRoute>
+      <Layout>{children}</Layout>
+    </ProtectedRoute>
+  );
+}
+
+function ParentPage({ children }: { children: React.ReactNode }) {
+  return (
+    <AppPage>
+      <ParentOnly>{children}</ParentOnly>
+    </AppPage>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <ThemeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/auth" element={<Auth />} />
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Dashboard />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/courses"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Courses />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/assignments"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Assignments />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/calendar"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Calendar />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/subjects"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Subjects />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/report-card"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <ReportCard />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/inbox"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Inbox />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/insights"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Insights />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/notices"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Notices />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/account"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Account />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <Settings />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ThemeProvider>
+      <FamilyProvider>
+        <ThemeProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/invite/:token" element={<Invite />} />
+                <Route path="/" element={<AppPage><Dashboard /></AppPage>} />
+                <Route path="/courses" element={<AppPage><Courses /></AppPage>} />
+                <Route path="/assignments" element={<AppPage><Assignments /></AppPage>} />
+                <Route path="/calendar" element={<AppPage><Calendar /></AppPage>} />
+                <Route path="/subjects" element={<AppPage><Subjects /></AppPage>} />
+                <Route path="/report-card" element={<AppPage><ReportCard /></AppPage>} />
+                <Route path="/inbox" element={<AppPage><Inbox /></AppPage>} />
+                <Route path="/insights" element={<AppPage><Insights /></AppPage>} />
+                <Route path="/notices" element={<AppPage><Notices /></AppPage>} />
+                <Route path="/account" element={<AppPage><Account /></AppPage>} />
+                <Route path="/settings" element={<AppPage><Settings /></AppPage>} />
+                <Route path="/family" element={<ParentPage><Family /></ParentPage>} />
+                <Route path="/finance" element={<ParentPage><Navigate to="/finance/home" replace /></ParentPage>} />
+                <Route path="/finance/home" element={<ParentPage><FinanceHome /></ParentPage>} />
+                <Route path="/finance/marketplace" element={<ParentPage><FinanceMarketplace /></ParentPage>} />
+                <Route path="/finance/pay" element={<ParentPage><FinancePay /></ParentPage>} />
+                <Route path="/finance/utilities" element={<ParentPage><FinanceUtilities /></ParentPage>} />
+                <Route path="/finance/apply" element={<ParentPage><FinanceApply /></ParentPage>} />
+                <Route path="/finance/applications" element={<ParentPage><FinanceApplications /></ParentPage>} />
+                <Route path="/finance/receipt" element={<ParentPage><FinanceReceipt /></ParentPage>} />
+                <Route path="/finance/school" element={<ParentPage><FinanceSchool /></ParentPage>} />
+                <Route path="/finance/supplier" element={<ParentPage><FinanceSupplier /></ParentPage>} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </ThemeProvider>
+      </FamilyProvider>
     </AuthProvider>
   </QueryClientProvider>
 );

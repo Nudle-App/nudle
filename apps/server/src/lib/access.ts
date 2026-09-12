@@ -1,4 +1,79 @@
 import { db } from "./db.js";
+import { DEFAULT_SCHOOL_ID, schoolById, type School } from "./schools.js";
+
+export async function userHasRole(userId: string, role: string) {
+  const row = await db("user_roles").where({ user_id: userId, role }).first("id");
+  return Boolean(row);
+}
+
+export async function assignAccountRole(
+  userId: string,
+  role: "student" | "teacher" | "parent",
+) {
+  const existing = await db("user_roles").where({ user_id: userId, role }).first();
+  if (!existing) {
+    await db("user_roles").insert({ user_id: userId, role });
+  }
+
+  if (role === "student") {
+    await db("user").where({ id: userId }).whereNull("school_id").update({
+      school_id: DEFAULT_SCHOOL_ID,
+    });
+  }
+
+  if (role === "parent") {
+    await db("user_roles").where({ user_id: userId, role: "student" }).delete();
+    const profile = await db("parent_profiles").where({ user_id: userId }).first();
+    if (!profile) {
+      await db("parent_profiles").insert({ user_id: userId });
+    }
+  }
+}
+
+export async function assertParent(userId: string) {
+  const ok = await userHasRole(userId, "parent");
+  if (!ok) {
+    const err = new Error("Parent access required");
+    (err as Error & { status: number }).status = 403;
+    throw err;
+  }
+}
+
+export type LinkedChild = {
+  id: string;
+  email: string;
+  name: string;
+  image: string | null;
+  relationship: string;
+  linkId: string;
+  school: School | null;
+};
+
+export async function getParentChildren(parentId: string): Promise<LinkedChild[]> {
+  const rows = await db("parent_students as ps")
+    .join("user as u", "u.id", "ps.student_id")
+    .where("ps.parent_id", parentId)
+    .select(
+      "ps.id as link_id",
+      "ps.relationship",
+      "u.id",
+      "u.name",
+      "u.email",
+      "u.image",
+      "u.school_id",
+    )
+    .orderBy("u.name");
+
+  return rows.map((row) => ({
+    id: row.id,
+    email: row.email,
+    name: row.name,
+    image: row.image ?? null,
+    relationship: row.relationship,
+    linkId: row.link_id,
+    school: schoolById(row.school_id),
+  }));
+}
 
 export async function isCourseTeacher(courseId: string, userId: string) {
   const row = await db("courses")

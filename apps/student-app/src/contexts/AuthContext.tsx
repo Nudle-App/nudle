@@ -1,6 +1,9 @@
 import { createContext, useContext } from "react";
-import { authClient } from "@/lib/auth-client";
+import { useQueryClient } from "@tanstack/react-query";
+import { authBaseURL, authClient } from "@/lib/auth-client";
 import { api } from "@/lib/api";
+
+type AccountRole = "student" | "parent";
 
 interface AuthContextType {
   user: { id: string; email: string; name: string } | null;
@@ -9,6 +12,7 @@ interface AuthContextType {
     email: string,
     password: string,
     fullName: string,
+    role?: AccountRole,
   ) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   loading: boolean;
@@ -16,7 +20,30 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+async function ensureRole(role: AccountRole) {
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const me = await api.get<{ roles: string[] }>("/api/me");
+    if (role !== "parent" || me.roles.includes("parent")) return;
+    try {
+      await api.post("/api/roles", { role: "parent" });
+      return;
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, 200 * (attempt + 1)));
+    }
+  }
+  throw new Error("Account created, but parent access could not be set.");
+}
+
+function authErrorMessage(payload: unknown, fallback: string) {
+  if (!payload || typeof payload !== "object") return fallback;
+  const record = payload as { message?: unknown; error?: unknown };
+  if (typeof record.message === "string" && record.message) return record.message;
+  if (typeof record.error === "string" && record.error) return record.error;
+  return fallback;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
 
   const signIn = async (email: string, password: string) => {
@@ -24,25 +51,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error: error ? new Error(error.message || "Sign in failed") : null };
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    const { error } = await authClient.signUp.email({
-      email,
-      password,
-      name: fullName,
+  const signUp = async (
+    email: string,
+    password: string,
+    fullName: string,
+    role: AccountRole = "student",
+  ) => {
+    const url = `${authBaseURL}/api/auth/sign-up/email?role=${encodeURIComponent(role)}`;
+    const response = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "x-kleva-role": role,
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        name: fullName,
+      }),
     });
-    if (error) {
-      return { error: new Error(error.message || "Sign up failed") };
+
+    if (!response.ok) {
+      let payload: unknown = null;
+      try {
+        payload = await response.json();
+      } catch {
+        payload = null;
+      }
+      return { error: new Error(authErrorMessage(payload, "Sign up failed")) };
     }
+
+    await authClient.getSession();
     try {
-      await api.post("/api/roles", { role: "student" });
+      await ensureRole(role);
     } catch (roleError) {
-      console.error("Failed to assign student role:", roleError);
+      return {
+        error:
+          roleError instanceof Error
+            ? roleError
+            : new Error("Account created, but parent access could not be set."),
+      };
     }
     return { error: null };
   };
 
   const signOut = async () => {
     await authClient.signOut();
+    queryClient.removeQueries({ queryKey: ["me"] });
   };
 
   const user = session?.user

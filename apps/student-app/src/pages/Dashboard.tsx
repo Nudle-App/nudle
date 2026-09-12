@@ -12,7 +12,18 @@ import { Button } from "@nudle/ui/button";
 import { Badge } from "@nudle/ui/badge";
 import { AIAssistant } from "@/components/AIAssistant";
 import { useAuth } from "@/contexts/AuthContext";
+import { useFamily } from "@/contexts/FamilyContext";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { ZikimallBanner } from "@/components/ZikimallBanner";
+
+const kpiWells = [
+  "bg-primary/10 text-primary",
+  "bg-brand-teal/15 text-brand-teal",
+  "bg-brand-orange/15 text-brand-orange",
+  "bg-brand-pink/15 text-brand-pink",
+];
 
 function greetingForHour(hour: number) {
   if (hour < 12) return "Good morning";
@@ -22,8 +33,16 @@ function greetingForHour(hour: number) {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const firstName = user?.name?.split(" ")[0] || "Student";
+  const { isParent, activeChild, children } = useFamily();
+  const firstName = user?.name?.split(" ")[0] || (isParent ? "Parent" : "Student");
   const greeting = greetingForHour(new Date().getHours());
+  const { data: invitations = [] } = useQuery({
+    queryKey: ["student-invitations"],
+    queryFn: () =>
+      api.get<Array<{ token: string; parentName: string; relationship: string }>>("/api/invitations"),
+    enabled: Boolean(user) && !isParent,
+    refetchOnMount: "always",
+  });
 
   const upcomingEvents: {
     id: number;
@@ -88,11 +107,70 @@ export default function Dashboard() {
             month: "long",
             day: "numeric",
           })}
+          {isParent && activeChild ? ` · Viewing ${activeChild.name}` : ""}
         </p>
       </div>
 
+      {isParent ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="surface-card p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <GraduationCap className="h-5 w-5" />
+            </span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold">Kleva Finance</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Pay fees, buy utilities, and apply for education loans.
+              </p>
+            </div>
+            <Button asChild className="rounded-full">
+              <Link to="/finance/home">Open finance</Link>
+            </Button>
+          </div>
+          <div className="surface-card p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-teal/15 text-brand-teal">
+              <Users className="h-5 w-5" />
+            </span>
+            <div className="flex-1">
+              <p className="text-sm font-semibold">
+                {children.length ? "Your family" : "Invite a student"}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {children.length
+                  ? `${children.length} linked student${children.length === 1 ? "" : "s"}`
+                  : "Invite your child by email. Access starts after they accept."}
+              </p>
+            </div>
+            <Button asChild variant="outline" className="rounded-full">
+              <Link to="/family">{children.length ? "Manage family" : "Invite a student"}</Link>
+            </Button>
+          </div>
+        </div>
+      ) : invitations.length > 0 ? (
+        <div className="space-y-3">
+          {invitations.map((invite) => (
+            <div
+              key={invite.token}
+              className="surface-card p-5 flex flex-col sm:flex-row sm:items-center gap-4"
+            >
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Parent invitation</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {invite.parentName} ({invite.relationship}) wants to view your school portal.
+                </p>
+              </div>
+              <Button asChild className="rounded-full">
+                <Link to={`/invite/${invite.token}`}>Review invite</Link>
+              </Button>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      <ZikimallBanner />
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpis.map((kpi) => (
+        {kpis.map((kpi, i) => (
           <div key={kpi.title} className="surface-card p-5">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
@@ -102,8 +180,8 @@ export default function Dashboard() {
                   <p className="text-xs text-muted-foreground mt-1">{kpi.hint}</p>
                 )}
               </div>
-              <div className="h-11 w-11 rounded-full bg-muted flex items-center justify-center shrink-0">
-                <kpi.icon className="h-5 w-5 text-foreground" />
+              <div className={`h-11 w-11 rounded-full flex items-center justify-center shrink-0 ${kpiWells[i % kpiWells.length]}`}>
+                <kpi.icon className="h-5 w-5" />
               </div>
             </div>
           </div>
